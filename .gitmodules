@@ -1,0 +1,3 @@
+[submodule "WEB3_Ajax/fetch"]
+	path = WEB3_Ajax/fetch
+	url = https://github.com/github/fetch.git
