@@ -18,9 +18,10 @@
     - JavaScript Immutability
     - *<https://opentutorials.org/module/4075>*
 1. WEB3_Ajax
-    - Ajax 기초
+    - Ajax - JS 내장 라이브러리 fetch
     - *<https://opentutorials.org/course/3281>*
-1. (Ajax -> React & Ajax -> CreateReactApp Proxy)
-1. (Redux -> React Redux -> Web App)
+1. react_ajax
+    - React & Ajax (fetch)
+    - *<https://opentutorials.org/module/4549>*
 
 **그 다음?**<br>
