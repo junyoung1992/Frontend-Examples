@@ -23,5 +23,7 @@
 1. react_ajax
     - React & Ajax (fetch)
     - *<https://opentutorials.org/module/4549>*
-
+1. proxy
+    - package.json에 proxy 설정을 추가하여 간단한 CORS 문제 해결
+    - *<https://www.youtube.com/watch?v=VaAWIAxvj0A>*
 **그 다음?**<br>
