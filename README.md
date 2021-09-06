@@ -14,7 +14,8 @@
 1. react-app
     - React 강의
     - *<https://opentutorials.org/module/4058>*
-1. JavaScript Immutability
+1. Immutability
+    - JavaScript Immutability
     - *<https://opentutorials.org/module/4075>*
 1. (Ajax -> React & Ajax -> CreateReactApp Proxy)
 1. (Redux -> React Redux -> Web App)
