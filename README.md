@@ -29,5 +29,8 @@
 1. redux
     - Redux 기초
     - *<https://opentutorials.org/module/4078>*
+1. react_redux
+    - React & Redux
+    - *<https://opentutorials.org/module/4518>*
 
 **그 다음?**<br>
