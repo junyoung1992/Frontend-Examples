@@ -33,8 +33,11 @@
     - *<https://opentutorials.org/module/4078>*
     - Ref: *<https://ko.redux.js.org/>*
 1. react_redux
-    - React & Redux
+    - React Redux 기초
     - *<https://opentutorials.org/module/4518>*
     - Ref: *<https://react-redux.js.org/>*
+1. react_redux_example
+    - React Redux Workshop
+    - *<https://www.youtube.com/watch?v=Cwwsv_OaWhM>*
 
-**그 다음?**<br>
+**그 다음은?**<br>
