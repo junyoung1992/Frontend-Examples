@@ -37,7 +37,7 @@
     - *<https://opentutorials.org/module/4518>*
     - Ref: *<https://react-redux.js.org/>*
 1. react_redux_example
-    - React Redux Workshop
+    - React Redux Workshop: CRUD 기초 앱
     - *<https://www.youtube.com/watch?v=Cwwsv_OaWhM>*
 
 **그 다음은?**<br>
