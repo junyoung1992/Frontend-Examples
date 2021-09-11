@@ -43,3 +43,5 @@
     - *<https://www.youtube.com/watch?v=Cwwsv_OaWhM>*
 
 ## 2. Exercise: NodeBird
+
+*<https://www.inflearn.com/course/노드버드-리액트-리뉴얼>*
