@@ -2,7 +2,7 @@
 
 **빠르게 훑어보고 정리하기**<br>
 
-## 1. Tutorial-React
+## 1. Tutorial: React
 
 1. WEB1_HTML
     - JS 강의를 위해 코드만 정리
