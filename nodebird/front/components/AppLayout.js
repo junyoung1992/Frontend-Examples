@@ -1,16 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from 'prop-types';
 import Link from 'next/link';
+import { Menu, Input, Row, Col } from 'antd';
+
+import UserProfile from "../components/UserProfile";
+import LoginForm from "../components/LoginForm";
 
 const AppLayout = ({ children }) => {
+  // 더미 데이터
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   return (
     <div>
-      <div>
-        <Link href="/"><a>노드버드</a></Link>
-        <Link href="/profile"><a>프로필</a></Link>
-        <Link href="/signup"><a>회원가입</a></Link>
-      </div>
-      { children }
+      <Menu mode="horizontal">
+        <Menu.Item>
+          <Link href="/"><a>노드버드</a></Link>
+        </Menu.Item>
+        <Menu.Item>
+          <Link href="/profile"><a>프로필</a></Link>
+        </Menu.Item>
+        <Menu.Item>
+          <Input.Search placeholder="input search text" enterButton style={{verticalAlign: 'middle'}}/>
+        </Menu.Item>
+        <Menu.Item>
+          <Link href="/signup"><a>회원가입</a></Link>
+        </Menu.Item>
+      </Menu>
+
+      {/* 그리드: 24분할 */}
+      <Row gutter={8}>
+        {/* xs: 모바일, sm: 태블릿, md: 작은 데스크탑, ... */}
+        <Col xs={24} md={6}>
+          { isLoggedIn ? <UserProfile /> : <LoginForm /> }
+        </Col>
+        <Col xs={24} md={12}>
+          { children }
+        </Col>
+        <Col xs={24} md={6}>
+          <a href="https://www.junyoung.xyz" target="_blank" rel="noreferrer noopener">Made by Kim Junyoung</a>
+        </Col>
+      </Row>
     </div>
   );
 };
