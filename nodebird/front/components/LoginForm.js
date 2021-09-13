@@ -1,21 +1,33 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { Form, Input, Button } from 'antd';
 import Link from "next/link";
+import styled from "styled-components";
+import PropTypes from 'prop-types';
 
-const LoginForm = () => {
-  const [id, setId] = useState('');
-  const [password, setPassword] = useState('');
+import useInput from "../hooks/useInput";
 
-  const onChangeId = useCallback((e) => {
-    setId(e.target.value);
-  }, []);
+const ButtonWrapper = styled.div`
+  margin-top: 10px;
+`;
 
-  const onChangePassword = useCallback((e) => {
-    setPassword(e.target.value);
-  }, []);
+const FormWrapper = styled(Form)`
+  padding: 10px;
+`;
+
+const LoginForm = ({ setIsLoggedIn }) => {
+  const [id, onChangeId] = useInput('');
+  const [password, onChangePassword] = useInput('');
+
+  const style = useMemo(() => ({ marginTop: 10 }), []);
+
+  const onSubmitForm = useCallback(() => {
+    // onFinish 는 e.preventDefault() 가 기본으로 적용되어 있음 - ant design
+    console.log(id, password);
+    setIsLoggedIn(true)
+  }, [id, password]);
 
   return (
-    <Form>
+    <FormWrapper onFinish={onSubmitForm}>
       <div>
         <label htmlFor="user-id">아이디 </label>
         <br />
@@ -31,12 +43,23 @@ const LoginForm = () => {
           onChange={onChangePassword}
           required />
       </div>
-      <div>
+
+      {/*
+        style 에 객체를 넣으면 조회할 때마다 매번 리렌더링 됨
+        성능에 큰 영향이 없다면 인라인 스타일을 써도 되나, 여기선 styled-component 사용해 css 적용
+        useMemo 를 사용해도 됨
+       */}
+      {/* <div style={{ marginTop: 10 }}> */}
+      <ButtonWrapper>
         <Button type="primary" htmlType="submit" loading={false}>로그인</Button>
         <Link href="/signup"><a><Button>회원가입</Button></a></Link>
-      </div>
-    </Form>
+      </ButtonWrapper>
+    </FormWrapper>
   )
+};
+
+LoginForm.propTypes = {
+  setIsLoggedIn: PropTypes.func.isRequired,
 };
 
 export default LoginForm;

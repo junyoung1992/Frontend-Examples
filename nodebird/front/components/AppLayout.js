@@ -2,9 +2,14 @@ import React, { useState } from "react";
 import PropTypes from 'prop-types';
 import Link from 'next/link';
 import { Menu, Input, Row, Col } from 'antd';
+import styled from "styled-components";
 
 import UserProfile from "../components/UserProfile";
 import LoginForm from "../components/LoginForm";
+
+const SearchInput = styled(Input.Search)`
+  vertical-align: middle;
+`;
 
 const AppLayout = ({ children }) => {
   // 더미 데이터
@@ -20,7 +25,7 @@ const AppLayout = ({ children }) => {
           <Link href="/profile"><a>프로필</a></Link>
         </Menu.Item>
         <Menu.Item>
-          <Input.Search placeholder="input search text" enterButton style={{verticalAlign: 'middle'}}/>
+          <SearchInput enterButton />
         </Menu.Item>
         <Menu.Item>
           <Link href="/signup"><a>회원가입</a></Link>
@@ -31,7 +36,7 @@ const AppLayout = ({ children }) => {
       <Row gutter={8}>
         {/* xs: 모바일, sm: 태블릿, md: 작은 데스크탑, ... */}
         <Col xs={24} md={6}>
-          { isLoggedIn ? <UserProfile /> : <LoginForm /> }
+          { isLoggedIn ? <UserProfile setIsLoggedIn={setIsLoggedIn} /> : <LoginForm setIsLoggedIn={setIsLoggedIn} /> }
         </Col>
         <Col xs={24} md={12}>
           { children }
