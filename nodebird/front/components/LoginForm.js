@@ -1,10 +1,11 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Form, Input, Button } from 'antd';
 import Link from "next/link";
 import styled from "styled-components";
-import PropTypes from 'prop-types';
+import { useDispatch } from "react-redux";
 
 import useInput from "../hooks/useInput";
+import { loginAction } from "../reducers/user";
 
 const ButtonWrapper = styled.div`
   margin-top: 10px;
@@ -14,7 +15,10 @@ const FormWrapper = styled(Form)`
   padding: 10px;
 `;
 
-const LoginForm = ({ setIsLoggedIn }) => {
+const LoginForm = () => {
+  const dispatch = useDispatch();
+
+  // useInput 이라는 Custom Hook 을 만들어서 반복 코딩을 줄임
   const [id, onChangeId] = useInput('');
   const [password, onChangePassword] = useInput('');
 
@@ -23,7 +27,7 @@ const LoginForm = ({ setIsLoggedIn }) => {
   const onSubmitForm = useCallback(() => {
     // onFinish 는 e.preventDefault() 가 기본으로 적용되어 있음 - ant design
     console.log(id, password);
-    setIsLoggedIn(true)
+    dispatch(loginAction({ id, password }));
   }, [id, password]);
 
   return (
@@ -56,10 +60,6 @@ const LoginForm = ({ setIsLoggedIn }) => {
       </ButtonWrapper>
     </FormWrapper>
   )
-};
-
-LoginForm.propTypes = {
-  setIsLoggedIn: PropTypes.func.isRequired,
 };
 
 export default LoginForm;

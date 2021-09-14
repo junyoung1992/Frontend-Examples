@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 
-// 범용적으로 쓸 수 있도록 명명
+// 범용적으로 쓸 수 있도록 변수 명명
 export default (initialValue = null) => {
   const [value, setValue] = useState(initialValue);
   const handler = useCallback((e) => {
