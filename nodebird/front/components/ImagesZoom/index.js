@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import {CloseBtn, Global, Header, ImageWrapper, Indicator, Overlay, SlickWrapper} from "./styles";
 
 const ImagesZoom = ({ images, onClose }) => {
+  // 컴포넌트가 렌더릴될 떄마다 실행
   useEffect(() => {
     const escKeyClose = (e) => {
       if(e.keyCode === 27) onClose();
