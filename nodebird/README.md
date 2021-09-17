@@ -21,8 +21,14 @@
 ```
 npm install \
     next react react-dom prop-types \
-    eslint eslint-plugin-import eslint-plugin-react eslint-plugin-react-hooks \
     antd @ant-design/icons styled-components \
-    next-redux-wrapper react-redux redux-devtools-extension \
+    next-redux-wrapper react-redux \
+    react-slick \
     --save
+```
+
+```
+npm install \
+    eslint eslint-plugin-import eslint-plugin-react eslint-plugin-react-hooks \
+    redux-devtools-extension
 ```

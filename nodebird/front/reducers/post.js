@@ -7,18 +7,18 @@ export const initialState = {
     },
     content: '첫 번째 게시글 #해시태그 #익스프레스',
     Images: [
-      {src: "https://w.namu.la/s/6f3147ad9ff270a34b91569a05f2d67d81c3b6b8d2e317d67365c92cbc6c9ca51ed28a1a92bf9e02f27a151fd95daf81bc03c835661e1bf9fd8d35f264fe84a17f86ebbbc4be963c29884ad73bf28fe30cee3d793d7dd4fb93869a911ceac5bd"},
-      {src: "https://w.namu.la/s/6f3147ad9ff270a34b91569a05f2d67d81c3b6b8d2e317d67365c92cbc6c9ca51ed28a1a92bf9e02f27a151fd95daf81bc03c835661e1bf9fd8d35f264fe84a17f86ebbbc4be963c29884ad73bf28fe30cee3d793d7dd4fb93869a911ceac5bd"},
-      {src: "https://w.namu.la/s/6f3147ad9ff270a34b91569a05f2d67d81c3b6b8d2e317d67365c92cbc6c9ca51ed28a1a92bf9e02f27a151fd95daf81bc03c835661e1bf9fd8d35f264fe84a17f86ebbbc4be963c29884ad73bf28fe30cee3d793d7dd4fb93869a911ceac5bd"},
+      {src: "https://blog.kakaocdn.net/dn/v3FCz/btq5gFqsH4j/f2ETyx8RRSfdrfE3zSZuE0/img.jpg"},
+      {src: "https://blog.kakaocdn.net/dn/v48mT/btq5gxe1JBp/iH7xWYNgMc3W7zIrhIkB7K/img.jpg"},
+      {src: "https://blog.kakaocdn.net/dn/cvlei7/btq5tx68El2/mbfae2ISIlr5sApDC0Fu3K/img.jpg"},
     ],
     Comments: [{
       User: {
-        nickname: 'nero',
+        nickname: '강광배',
       },
       content: '우와',
     }, {
       User: {
-        nickname: 'hero',
+        nickname: '혜원',
       },
       content: '광배',
     }]
