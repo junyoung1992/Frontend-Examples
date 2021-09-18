@@ -1,5 +1,5 @@
-import styled, {createGlobalStyle} from "styled-components";
-import {CloseOutlined} from "@ant-design/icons";
+import styled, { createGlobalStyle } from 'styled-components';
+import { CloseOutlined } from '@ant-design/icons';
 
 // 이미 존재하는 컴포넌트에 styled-component 를 덮어 씌울 수 있음
 export const Global = createGlobalStyle`

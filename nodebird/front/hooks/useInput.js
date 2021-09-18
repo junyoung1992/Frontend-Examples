@@ -9,5 +9,5 @@ export default (initialValue = null) => {
 
   // useState 와 useCallback 을 둘 다 사용하니까 
   // setValue 대신 handler 를 리턴
-  return [value, handler];
+  return [value, handler, setValue];
 }

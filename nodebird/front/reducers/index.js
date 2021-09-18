@@ -1,16 +1,16 @@
 import { HYDRATE } from 'next-redux-wrapper';
-import { combineReducers } from "redux";
+import { combineReducers } from 'redux';
 
-import user from "./user";
-import post from "./post";
+import user from './user';
+import post from './post';
 
 // combineReducers를 사용해 복수의 분할된 리듀서를 병합
-const rootReducer=  combineReducers({
-  index: (state = {}, action) => { 
+const rootReducer = combineReducers({
+  index: (state = {}, action) => {
     switch (action.type) {
       case HYDRATE: // 추후 Redux SSR을 위해 HYDRATE 추가
         console.log('HYDRATE', action);
-        return {...state, ...action.payload};
+        return { ...state, ...action.payload };
       default:
         return state;
     }

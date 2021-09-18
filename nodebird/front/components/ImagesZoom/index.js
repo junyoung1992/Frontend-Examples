@@ -1,25 +1,25 @@
-import React, {useEffect, useState} from "react";
-import Slick from "react-slick";
-import PropTypes from "prop-types";
+import React, { useEffect, useState } from 'react';
+import Slick from 'react-slick';
+import PropTypes from 'prop-types';
 
-import {CloseBtn, Global, Header, ImageWrapper, Indicator, Overlay, SlickWrapper} from "./styles";
+import { CloseBtn, Global, Header, ImageWrapper, Indicator, Overlay, SlickWrapper } from './styles';
 
 const ImagesZoom = ({ images, onClose }) => {
   // 컴포넌트가 렌더릴될 떄마다 실행
   useEffect(() => {
     const escKeyClose = (e) => {
-      if(e.keyCode === 27) onClose();
+      if (e.keyCode === 27) onClose();
     };
-    
+
     window.addEventListener('keyup', escKeyClose);
-    
-    return(() => {
+
+    return (() => {
       window.removeEventListener('keyup', escKeyClose);
     });
   }, []);
-  
+
   const [currentSlide, setCurrentSlide] = useState(0);
-  
+
   return (
     <Overlay>
       <Global />
@@ -64,6 +64,6 @@ const ImagesZoom = ({ images, onClose }) => {
 ImagesZoom.propTypes = {
   images: PropTypes.arrayOf(PropTypes.object).isRequired,
   onClose: PropTypes.func.isRequired,
-}
+};
 
 export default ImagesZoom;

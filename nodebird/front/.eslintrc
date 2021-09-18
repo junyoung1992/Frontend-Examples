@@ -1,6 +1,7 @@
 {
+    "parser": "babel-eslint",
     "parserOptions": {
-        "ecmaVersion": 2020,
+        "ecmaVersion": 2018,
         "sourceType": "module",
         "ecmaFeatures": {
             "jsx": true
@@ -12,14 +13,21 @@
         "es6": true
     },
     "extends": [
-        "eslint:recommended",
-        "plugin:react/recommended"
+        "airbnb"
     ],
     "plugins": [
         "import",
         "react-hooks"
     ],
     "rules": {
-        
+        "jsx-a11y/label-has-assiciated-control": "off",
+        "jsx-ally/anchor-is-valid": "off",
+        "linebreak-style": "off",
+        "no-console": "off",
+        "no-underscore-dangle": "off",
+        "object-curly-newline": 0,
+        "react/forbid-prop-types": "off",
+        "react/jsx-filename-extension": "off",
+        "react/jsx-one-expression-per-line": "off"
     }
 }
