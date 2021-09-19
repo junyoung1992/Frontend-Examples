@@ -27,7 +27,6 @@ const LoginForm = () => {
 
   const onSubmitForm = useCallback(() => {
     // onFinish 는 e.preventDefault() 가 기본으로 적용되어 있음 - ant design
-    console.log(email, password);
     dispatch(loginRequestAction({ email, password }));
   }, [email, password]);
 
@@ -36,7 +35,7 @@ const LoginForm = () => {
       <div>
         <label htmlFor="user-email">이메일</label>
         <br />
-        <Input name="user-email" value={email} onChange={onChangeEmail} required />
+        <Input name="user-email" type="email" value={email} onChange={onChangeEmail} required />
       </div>
       <div>
         <label htmlFor="user-password">비밀번호</label>

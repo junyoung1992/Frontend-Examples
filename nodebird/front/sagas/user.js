@@ -2,6 +2,8 @@ import { all, delay, fork, put, takeEvery, takeLatest } from 'redux-saga/effects
 import axios from 'axios';
 
 import {
+  FOLLOW_FAILURE, FOLLOW_REQUEST, FOLLOW_SUCCESS,
+  UNFOLLOW_FAILURE, UNFOLLOW_REQUEST, UNFOLLOW_SUCCESS,
   LOG_IN_FAILURE, LOG_IN_REQUEST, LOG_IN_SUCCESS,
   LOG_OUT_FAILURE, LOG_OUT_REQUEST, LOG_OUT_SUCCESS,
   SIGN_UP_FAILURE, SIGN_UP_REQUEST, SIGN_UP_SUCCESS,
@@ -19,9 +21,16 @@ function signUpAPI(data) {
   return axios.post('/api/signup', data);
 }
 
+function followAPI(data) {
+  return axios.post('/api/follow', data);
+}
+
+function unfollowAPI(data) {
+  return axios.post('/api/unfollow', data);
+}
+
 function* logIn(action) {
   try {
-    console.log('saga logIn');
     // const result = yield call(logInAPI, action.data);  // call 은 동기. 요청을 보내고 결과가 올 때 까지 기다림
     yield delay(1000);
     yield put({
@@ -38,7 +47,6 @@ function* logIn(action) {
 
 function* logOut() {
   try {
-    console.log('saga logOut');
     // const result = yield call(logOutAPI);
     yield delay(1000);
     yield put({
@@ -54,7 +62,6 @@ function* logOut() {
 
 function* signUp() {
   try {
-    console.log('saga signUp');
     // const result = yield call(signUpAPI);
     yield delay(1000);
     yield put({
@@ -63,6 +70,38 @@ function* signUp() {
   } catch (err) {
     yield put({
       type: SIGN_UP_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function* follow(action) {
+  try {
+    // const result = yield call(signUpAPI);
+    yield delay(1000);
+    yield put({
+      type: FOLLOW_SUCCESS,
+      data: action.data,
+    });
+  } catch (err) {
+    yield put({
+      type: FOLLOW_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function* unfollow(action) {
+  try {
+    // const result = yield call(signUpAPI);
+    yield delay(1000);
+    yield put({
+      type: UNFOLLOW_SUCCESS,
+      data: action.data,
+    });
+  } catch (err) {
+    yield put({
+      type: UNFOLLOW_FAILURE,
       error: err.response.data,
     });
   }
@@ -87,10 +126,20 @@ function* watchSignUp() {
   yield takeEvery(SIGN_UP_REQUEST, signUp);
 }
 
+function* watchFollow() {
+  yield takeEvery(FOLLOW_REQUEST, follow);
+}
+
+function* watchUnfollow() {
+  yield takeEvery(UNFOLLOW_REQUEST, unfollow);
+}
+
 export default function* userSaga() {
   yield all([
     fork(watchLogin), // fork 와 call 의 차이를 알아야 함
     fork(watchLogOut), // fork 는 비동기. 요청을 보내고 결과를 기다리지 않고 진행
     fork(watchSignUp),
+    fork(watchFollow),
+    fork(watchUnfollow),
   ]);
 }

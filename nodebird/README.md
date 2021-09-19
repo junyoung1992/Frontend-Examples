@@ -27,7 +27,14 @@
 - Axios
     - <https://axios-http.com>
     - HTTP 통신 라이브러리
-    - fetch를 써도 되긴 하는데 강의에서 axios를 쓰니까 적
+    - fetch를 써도 되긴 하는데 강의에서 axios 씀
+- Short ID 
+    - 겹치기 힘든 아이디 값 생성
+- immer
+    - 불변성 처리
+    - immutable.js보다 편함
+- Faker
+    - 각종 더미데이터 생성
 
 ```
 npm install \
@@ -35,7 +42,7 @@ npm install \
     antd @ant-design/icons styled-components \
     next-redux-wrapper react-redux \
     react-slick \
-    redux-saga axios\
+    redux-saga axios shortid immer faker \
     --save
 ```
 
