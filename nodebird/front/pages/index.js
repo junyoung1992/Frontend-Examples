@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import AppLayout from '../components/AppLayout';
@@ -21,7 +21,7 @@ const Home = () => {
   useEffect(() => {
     function onScroll() {
       // console.log(window.scrollY, document.documentElement.clientHeight,
-      //             document.documentElement.scrollHeight);
+      //   document.documentElement.scrollHeight, hasMorePosts, loadPostsLoading);
       if (window.scrollY + document.documentElement.clientHeight
           > document.documentElement.scrollHeight - 300) {
         if (hasMorePosts && !loadPostsLoading) {
