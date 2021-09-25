@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, {useCallback, useEffect} from 'react';
 import { Form, Input, Button } from 'antd';
 import Link from 'next/link';
 import styled from 'styled-components';
@@ -17,7 +17,13 @@ const FormWrapper = styled(Form)`
 
 const LoginForm = () => {
   const dispatch = useDispatch();
-  const { logInLoading } = useSelector((state) => state.user);
+  const { logInLoading, logInError } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if (logInError) {
+      alert(logInError);
+    }
+  }, [logInError]);
 
   // useInput 이라는 Custom Hook 을 만들어서 반복 코딩을 줄임
   const [email, onChangeEmail] = useInput('');

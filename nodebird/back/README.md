@@ -14,10 +14,24 @@
     - 코드 수정 시 항시 서버 재기동
     - 실행: `nodemon app`
         - package.json 에 등록해서 사용해도 됨
+5. bcrypt
+    - 암호화 라이브러리
+6. cors
+    - CORS (Cross-Origin Resource Sharing) 회피
+7. passport & passport-local
+    - 로그인 지원
+8. express session
+    - 쿠키/세션을 구축하기 위해 사용
+9. cookie parser
+    - 쿠키 파서
+10. dotenv
+    - 중요한 키 값을 .env 파일에 따로 관리
 
 ```
 npm install \
-    express sequelize sequelize-cli mysql2
+    express sequelize sequelize-cli mysql2 \
+    bcrypt cors passport passport-local \
+    express-session cookie-parser
 
 npm install -D \
     nodemon

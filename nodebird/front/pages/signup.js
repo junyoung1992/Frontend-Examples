@@ -1,12 +1,13 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import Head from 'next/head';
 import { Form, Input, Checkbox, Button } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+import Router from 'next/router';
 
 import AppLayout from '../components/AppLayout';
 import useInput from '../hooks/useInput';
-import { SIGN_UP_REQUEST } from '../stringLabel/action';
+import {SIGN_UP_REQUEST, SIGN_UP_RESET} from '../stringLabel/action';
 
 const ErrorMessage = styled.div`
   color: red;
@@ -14,7 +15,29 @@ const ErrorMessage = styled.div`
 
 const Signup = () => {
   const dispatch = useDispatch();
-  const { signUpLoading } = useSelector((state) => state.user);
+  const { signUpLoading, signUpDone, signUpError, me } = useSelector((state) => state.user);
+
+  // 로그인이 된 상태에서는 회원가입 페이지에 접근할 수 없음
+  useEffect(() => {
+    if (me && me.id) {
+      Router.replace('/'); // push 는 뒤로가기 하면 이전 페이지로 돌아가지는데, replace 는 페이지를 대체하는 개념이라 이전 페이지로 갈 수 없음
+    }
+  }, [me && me.id]);
+
+  useEffect(() => {
+    if (signUpDone) {
+      dispatch({
+        type: SIGN_UP_RESET,
+      });
+      Router.replace('/');
+    }
+  }, [signUpDone]);
+
+  useEffect(() => {
+    if (signUpError) {
+      alert(signUpError);
+    }
+  }, [signUpError]);
 
   const [email, onChangeEmail] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
@@ -46,8 +69,8 @@ const Signup = () => {
       type: SIGN_UP_REQUEST,
       data: {
         email,
-        password,
         nickname,
+        password,
       },
     });
   }, [password, passwordCheck, term]);

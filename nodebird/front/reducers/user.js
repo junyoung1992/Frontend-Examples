@@ -16,10 +16,20 @@ import {
   REMOVE_POST_OF_ME,
   SIGN_UP_FAILURE,
   SIGN_UP_REQUEST,
-  SIGN_UP_SUCCESS, UNFOLLOW_FAILURE, UNFOLLOW_REQUEST, UNFOLLOW_SUCCESS,
+  SIGN_UP_SUCCESS,
+  SIGN_UP_RESET,
+  UNFOLLOW_FAILURE,
+  UNFOLLOW_REQUEST,
+  UNFOLLOW_SUCCESS,
+  LOAD_MY_INFO_REQUEST,
+  LOAD_MY_INFO_SUCCESS,
+  LOAD_MY_INFO_FAILURE,
 } from '../stringLabel/action';
 
 export const initialState = {
+  loadMyInfoLoading: false,
+  loadMyInfoDone: false,
+  loadMyInfoError: null,
   logInLoading: false, // 로그인 시도 중
   logInDone: false,
   logInError: null,
@@ -43,21 +53,6 @@ export const initialState = {
   loginData: {},
 };
 
-const dummyUser = (data) => ({
-  ...data,
-  nickname: '김준영',
-  id: 1,
-  Posts: [
-    { id: 1 },
-  ],
-  Followings: [
-    { id: 2, nickname: '박수현' },
-  ],
-  Followers: [
-    { id: 2, nickname: '박수현' },
-  ],
-});
-
 // action creator
 export const loginRequestAction = (data) => ({
   type: LOG_IN_REQUEST,
@@ -70,6 +65,20 @@ export const logoutRequestAction = () => ({
 
 const reducer = (state = initialState, action) => produce(state, (draft) => {
   switch (action.type) {
+    case LOAD_MY_INFO_REQUEST:
+      draft.loadMyInfoLoading = true;
+      draft.loadMyInfoDone = false;
+      draft.loadMyInfoError = null;
+      break;
+    case LOAD_MY_INFO_SUCCESS:
+      draft.loadMyInfoLoading = false;
+      draft.loadMyInfoDone = true;
+      draft.me = action.data;
+      break;
+    case LOAD_MY_INFO_FAILURE:
+      draft.loadMyInfoLoading = false;
+      draft.loadMyInfoError = action.error;
+      break;
     case LOG_IN_REQUEST:
       draft.logInLoading = true;
       draft.logInDone = false;
@@ -78,7 +87,7 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
     case LOG_IN_SUCCESS:
       draft.logInLoading = false;
       draft.logInDone = true;
-      draft.me = dummyUser(action.data);
+      draft.me = action.data;
       break;
     case LOG_IN_FAILURE:
       draft.logInLoading = false;
@@ -110,6 +119,11 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
     case SIGN_UP_FAILURE:
       draft.signUpLoading = false;
       draft.signUpError = action.error;
+      break;
+    case SIGN_UP_RESET:
+      draft.signUpLoading = false;
+      draft.signUpDone = false;
+      draft.signUpError = null;
       break;
     case CHANGE_NICKNAME_REQUEST:
       draft.changeNicknameLoading = true;

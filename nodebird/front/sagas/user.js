@@ -1,4 +1,4 @@
-import { all, delay, fork, put, takeEvery, takeLatest } from 'redux-saga/effects';
+import { all, call, delay, fork, put, takeEvery, takeLatest } from 'redux-saga/effects';
 import axios from 'axios';
 
 import {
@@ -6,36 +6,50 @@ import {
   UNFOLLOW_FAILURE, UNFOLLOW_REQUEST, UNFOLLOW_SUCCESS,
   LOG_IN_FAILURE, LOG_IN_REQUEST, LOG_IN_SUCCESS,
   LOG_OUT_FAILURE, LOG_OUT_REQUEST, LOG_OUT_SUCCESS,
-  SIGN_UP_FAILURE, SIGN_UP_REQUEST, SIGN_UP_SUCCESS,
+  SIGN_UP_FAILURE, SIGN_UP_REQUEST, SIGN_UP_SUCCESS, LOAD_MY_INFO_REQUEST, LOAD_MY_INFO_SUCCESS, LOAD_MY_INFO_FAILURE,
 } from '../stringLabel/action';
 
-function logInAPI(data) {
-  return axios.post('/api/login', data);
-}
-
-function logOutAPI(data) {
-  return axios.post('/api/logout', data);
-}
-
-function signUpAPI(data) {
-  return axios.post('/api/signup', data);
-}
-
 function followAPI(data) {
-  return axios.post('/api/follow', data);
+  return axios.post('/follow', data);
 }
 
 function unfollowAPI(data) {
-  return axios.post('/api/unfollow', data);
+  return axios.post('/unfollow', data);
+}
+
+function loadMyInfoAPI() {
+  return axios.get('/user');
+}
+
+function* loadMyInfo() {
+  try {
+    const result = yield call(loadMyInfoAPI); // call 은 동기. 요청을 보내고 결과가 올 때 까지 기다림
+    console.log(result);
+
+    yield put({
+      type: LOAD_MY_INFO_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: LOAD_MY_INFO_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function logInAPI(data) {
+  return axios.post('/user/login', data);
 }
 
 function* logIn(action) {
   try {
-    // const result = yield call(logInAPI, action.data);  // call 은 동기. 요청을 보내고 결과가 올 때 까지 기다림
-    yield delay(1000);
+    const result = yield call(logInAPI, action.data); // call 은 동기. 요청을 보내고 결과가 올 때 까지 기다림
+    console.log(result);
+
     yield put({
       type: LOG_IN_SUCCESS,
-      data: action.data,
+      data: result.data,
     });
   } catch (err) {
     yield put({
@@ -45,10 +59,13 @@ function* logIn(action) {
   }
 }
 
+function logOutAPI() {
+  return axios.post('/user/logout');
+}
+
 function* logOut() {
   try {
-    // const result = yield call(logOutAPI);
-    yield delay(1000);
+    yield call(logOutAPI);
     yield put({
       type: LOG_OUT_SUCCESS,
     });
@@ -60,10 +77,15 @@ function* logOut() {
   }
 }
 
-function* signUp() {
+function signUpAPI(data) {
+  return axios.post('/user', data);
+}
+
+function* signUp(action) {
   try {
-    // const result = yield call(signUpAPI);
-    yield delay(1000);
+    const result = yield call(signUpAPI, action.data);
+    console.log(result);
+
     yield put({
       type: SIGN_UP_SUCCESS,
     });
@@ -107,6 +129,10 @@ function* unfollow(action) {
   }
 }
 
+function* watchLoadMyInfo() {
+  yield takeEvery(LOAD_MY_INFO_REQUEST, loadMyInfo);
+}
+
 function* watchLogin() {
   // while(true) { // take 는 일회용이므로 while 과 섞어서 사용하기도 함 (동기적으로 동작)
   //   yield take('LOG_IN_REQUEST', logIn); // take: LOG_IN 이라는 액션이 실행될 때까지 기다림
@@ -136,6 +162,7 @@ function* watchUnfollow() {
 
 export default function* userSaga() {
   yield all([
+    fork(watchLoadMyInfo),
     fork(watchLogin), // fork 와 call 의 차이를 알아야 함
     fork(watchLogOut), // fork 는 비동기. 요청을 보내고 결과를 기다리지 않고 진행
     fork(watchSignUp),
