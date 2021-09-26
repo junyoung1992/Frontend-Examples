@@ -4,8 +4,10 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const dotenv = require('dotenv');
+const morgan = require('morgan');
 
 const postRouter = require('./routes/post');
+const postsRouter = require('./routes/posts');
 const userRouter = require('./routes/user');
 const db = require('./models');
 const passportConfig = require('./passport');
@@ -24,6 +26,7 @@ db.sequelize.sync()
 // 로그인 기능 추가
 passportConfig();
 
+app.use(morgan('dev'));
 // CORS 회피
 app.use(cors({
   origin: 'http://localhost:3060', // 해당 주소의 요청만 허용하겠다.
@@ -49,16 +52,9 @@ app.get('/', (req, res) => {
   res.send('hello express');
 });
 
-app.get('/posts', (req, res) => {
-  res.json([
-    {id: 1, content: 'hello1'},
-    {id: 2, content: 'hello2'},
-    {id: 3, content: 'hello3'},
-  ]);
-});
-
 // prefix: post
 app.use('/post', postRouter);
+app.use('/posts', postsRouter);
 app.use('/user', userRouter);
 
 // Error 처리 미들웨어

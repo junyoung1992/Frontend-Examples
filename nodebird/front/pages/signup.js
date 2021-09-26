@@ -7,7 +7,7 @@ import Router from 'next/router';
 
 import AppLayout from '../components/AppLayout';
 import useInput from '../hooks/useInput';
-import {SIGN_UP_REQUEST, SIGN_UP_RESET} from '../stringLabel/action';
+import { SIGN_UP_REQUEST, SIGN_UP_RESET } from '../stringLabel/action';
 
 const ErrorMessage = styled.div`
   color: red;

@@ -24,7 +24,6 @@ function loadMyInfoAPI() {
 function* loadMyInfo() {
   try {
     const result = yield call(loadMyInfoAPI); // call 은 동기. 요청을 보내고 결과가 올 때 까지 기다림
-    console.log(result);
 
     yield put({
       type: LOAD_MY_INFO_SUCCESS,
@@ -45,7 +44,6 @@ function logInAPI(data) {
 function* logIn(action) {
   try {
     const result = yield call(logInAPI, action.data); // call 은 동기. 요청을 보내고 결과가 올 때 까지 기다림
-    console.log(result);
 
     yield put({
       type: LOG_IN_SUCCESS,
@@ -84,7 +82,6 @@ function signUpAPI(data) {
 function* signUp(action) {
   try {
     const result = yield call(signUpAPI, action.data);
-    console.log(result);
 
     yield put({
       type: SIGN_UP_SUCCESS,

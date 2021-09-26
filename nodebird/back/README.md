@@ -26,12 +26,14 @@
     - 쿠키 파서
 10. dotenv
     - 중요한 키 값을 .env 파일에 따로 관리
+11. morgan
+    - 프론트에서 백엔드로 보낸 요청이 기록됨 - 디버깅 용이
 
 ```
 npm install \
     express sequelize sequelize-cli mysql2 \
     bcrypt cors passport passport-local \
-    express-session cookie-parser
+    express-session cookie-parser morgan
 
 npm install -D \
     nodemon
