@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { all, call, delay, fork, put, takeEvery, throttle } from 'redux-saga/effects';
+import { all, call, fork, put, takeEvery, throttle } from 'redux-saga/effects';
 
 import {
   LOAD_POSTS_REQUEST,
@@ -71,23 +71,20 @@ function* addPost(action) {
 }
 
 function removePostAPI(data) {
-  return axios.post(
-    '/api/post',
-    data,
-  );
+  return axios.delete(`/post/${data}`);
 }
 
 function* removePost(action) {
   try {
-    // const result = yield call(removePostAPI);
-    yield delay(1000);
+    const result = yield call(removePostAPI, action.data);
+
     yield put({
       type: REMOVE_POST_SUCCESS,
-      data: action.data,
+      data: result.data,
     });
     yield put({
       type: REMOVE_POST_OF_ME,
-      data: action.data,
+      data: result.data,
     });
   } catch (err) {
     yield put({

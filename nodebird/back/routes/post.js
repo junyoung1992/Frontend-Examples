@@ -93,7 +93,7 @@ router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {
     
     const comment = await Comment.create({
       content: req.body.content,
-      PostId: parseInt(req.params.postId, 10),
+      PostId: req.params.postId,
       UserId: req.user.id,
     });
     
@@ -112,9 +112,21 @@ router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {
   }
 });
 
-// DELETE /post
-router.delete('/', isLoggedIn, (req, res) => {
-  res.json({id: 1});
+// DELETE /post/1
+router.delete('/:postId', isLoggedIn, async (req, res, next) => {
+  try {
+    await Post.destroy({
+      where: {
+        id: req.params.postId,
+        UserId: req.user.id,
+      },
+    });
+    
+    res.status(200).json({ PostId: parseInt(req.params.postId) });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
 });
 
 module.exports = router;

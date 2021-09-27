@@ -41,6 +41,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+// POST /user
 router.post('/', isNotLoggedIn, async (req, res, next) => {
   try {
     // create 가 비동기 함수이기 때문에 await 이 있어야 User.create() 가 실행된 다음에 res.send() 가 실행됨
@@ -64,6 +65,7 @@ router.post('/', isNotLoggedIn, async (req, res, next) => {
 
     // CORS 를 회피하기 위해
     // res.setHeader('Access-Control-Allow-Origin', 'http//localhost:3060');
+    // app.js 에서 cors() 를 사용함
 
     // HTTP 201 CREATED
     res.status(201).send('ok');
@@ -125,6 +127,115 @@ router.post('/logout', isLoggedIn, (req, res) => {
   req.logout();
   req.session.destroy();
   res.status(200).send('ok');
+});
+
+// PATCH /user/nickname
+router.patch('/nickname', isLoggedIn, async (req, res, next) => {
+  try {
+    await User.update({
+      nickname: req.body.nickname,
+    }, {
+      where: { id: req.user.id },
+    });
+    res.status(200).json({ nickname: req.body.nickname });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+// PATCH /user/1/follow
+router.patch('/:userId/follow', isLoggedIn, async (req, res, next) => {
+  try {
+    const user = await User.findOne({
+      where: { id: req.params.userId },
+    });
+    if (!user) {
+      return res.status(403).send('존재하지 않는 사용자입니다.');
+    }
+    await user.addFollowers(req.user.id);
+    res.status(200).json({ UserId: parseInt(req.params.userId) });
+    
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+// DELETE /user/1/follow
+router.delete('/:userId/follow', isLoggedIn, async (req, res, next) => {
+  try {
+    const user = await User.findOne({
+      where: { id: req.params.userId },
+    });
+    if (!user) {
+      return res.status(403).send('존재하지 않는 사용자입니다.');
+    }
+
+    await user.removeFollowers(req.user.id);
+    res.status(200).json({ UserId: parseInt(req.params.userId) });
+    
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+// GET /user/followings
+router.get('/followings', isLoggedIn, async (req, res, next) => {
+  try {
+    const user = await User.findOne({
+      where: { id: req.user.id },
+    });
+    if (!user) {
+      return res.status(403).send('존재하지 않는 사용자입니다.');
+    }
+
+    const followings = await user.getFollowings();  // 내가 팔로우하는 사용자 목록 조회
+    res.status(200).json(followings);
+
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+// GET /user/followers
+router.get('/followers', isLoggedIn, async (req, res, next) => {
+  try {
+    const user = await User.findOne({
+      where: { id: req.user.id },
+    });
+    if (!user) {
+      return res.status(403).send('존재하지 않는 사용자입니다.');
+    }
+    
+    const followers = await user.getFollowers();  // 나를 팔로우하는 사용자 목록 조회
+    res.status(200).json(followers);
+
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+// DELETE /user/followers/1
+router.delete('/follower/:userId', isLoggedIn, async (req, res, next) => {
+  try {
+    const user = await User.findOne({
+      where: { id: req.user.id },
+    });
+    if (!user) {
+      return res.status(403).send('존재하지 않는 사용자입니다.');
+    }
+
+    await user.removeFollowers(req.params.userId);  // 나를 팔로우하는 사용자 목록 조회
+    res.status(200).json({ UserId: parseInt(req.params.userId) });
+
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
 });
 
 module.exports = router;
