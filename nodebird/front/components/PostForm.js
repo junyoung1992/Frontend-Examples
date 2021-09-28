@@ -14,7 +14,9 @@ const PostForm = () => {
   const [text, onChangeText, setText] = useInput('');
 
   useEffect(() => {
-    if (addPostDone) { // onSubmit 후 setText('') 을 실행하면, 정상적으로 게시글이 업로드가 되지 못해도 입력창이 초기화됨
+    // onSubmit 후 setText('') 을 실행하면, 정상적으로 게시글이 업로드가 되지 못해도 입력창이 초기화됨
+    // 게시글 업로드가 성공했을 때만 입력 칸 초기화
+    if (addPostDone) {
       setText('');
     }
   }, [addPostDone]);
