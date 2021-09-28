@@ -28,12 +28,14 @@
     - 중요한 키 값을 .env 파일에 따로 관리
 11. morgan
     - 프론트에서 백엔드로 보낸 요청이 기록됨 - 디버깅 용이
+12. multer
+    - multipart 를 백엔드에서 처리할 수 있음
 
 ```
 npm install \
     express sequelize sequelize-cli mysql2 \
     bcrypt cors passport passport-local \
-    express-session cookie-parser morgan
+    express-session cookie-parser morgan multer
 
 npm install -D \
     nodemon

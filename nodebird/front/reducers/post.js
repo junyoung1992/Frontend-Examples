@@ -15,7 +15,12 @@ import {
   REMOVE_POST_SUCCESS,
   LIKE_POST_REQUEST,
   LIKE_POST_SUCCESS,
-  LIKE_POST_FAILURE, UNLIKE_POST_REQUEST, UNLIKE_POST_SUCCESS, UNLIKE_POST_FAILURE,
+  LIKE_POST_FAILURE,
+  UNLIKE_POST_REQUEST,
+  UNLIKE_POST_SUCCESS,
+  UNLIKE_POST_FAILURE,
+  UPLOAD_IMAGES_REQUEST,
+  UPLOAD_IMAGES_SUCCESS, UPLOAD_IMAGES_FAILURE,
 } from '../stringLabel/action';
 
 export const initialState = {
@@ -31,6 +36,9 @@ export const initialState = {
   removePostLoading: false,
   removePostDone: false,
   removePostError: null,
+  uploadImagesLoading: false,
+  uploadImagesDone: false,
+  uploadImagesError: null,
   likePostLoading: true,
   likePostDone: false,
   likePostError: null,
@@ -98,6 +106,20 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
     case REMOVE_POST_FAILURE:
       draft.removePostLoading = false;
       draft.removePostError = action.error;
+      break;
+    case UPLOAD_IMAGES_REQUEST:
+      draft.uploadImagesLoading = true;
+      draft.uploadImagesDone = false;
+      draft.uploadImagesError = null;
+      break;
+    case UPLOAD_IMAGES_SUCCESS:
+      draft.imagePaths = action.data;
+      draft.uploadImagesLoading = false;
+      draft.uploadImagesDone = true;
+      break;
+    case UPLOAD_IMAGES_FAILURE:
+      draft.uploadImagesLoading = false;
+      draft.uploadImagesError = action.error;
       break;
     case LIKE_POST_REQUEST:
       draft.likePostLoading = true;

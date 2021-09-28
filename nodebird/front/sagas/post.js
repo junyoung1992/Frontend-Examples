@@ -20,7 +20,11 @@ import {
   UNLIKE_POST_REQUEST,
   UNLIKE_POST_SUCCESS,
   UNLIKE_POST_FAILURE,
-  LIKE_POST_SUCCESS, LIKE_POST_FAILURE,
+  LIKE_POST_SUCCESS,
+  LIKE_POST_FAILURE,
+  UPLOAD_IMAGES_REQUEST,
+  UPLOAD_IMAGES_SUCCESS,
+  UPLOAD_IMAGES_FAILURE,
 } from '../stringLabel/action';
 
 function loadPostsAPI(data) {
@@ -89,6 +93,26 @@ function* removePost(action) {
   } catch (err) {
     yield put({
       type: REMOVE_POST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function uploadImagesAPI(data) {
+  return axios.post('/post/images', data); // form 데이터는 {} 로 감싸면 절대 안됨. {} 로 감싸면 json 이 되버림
+}
+
+function* uploadImages(action) {
+  try {
+    const result = yield call(uploadImagesAPI, action.data);
+
+    yield put({
+      type: UPLOAD_IMAGES_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: UPLOAD_IMAGES_FAILURE,
       error: err.response.data,
     });
   }
@@ -177,6 +201,10 @@ function* watchRemovePost() {
   yield takeEvery(REMOVE_POST_REQUEST, removePost);
 }
 
+function* watchUploadImages() {
+  yield takeEvery(UPLOAD_IMAGES_REQUEST, uploadImages);
+}
+
 function* watchLikePost() {
   yield takeEvery(LIKE_POST_REQUEST, likePost);
 }
@@ -194,6 +222,7 @@ export default function* postSaga() {
     fork(watchLoadPosts),
     fork(watchAddPost),
     fork(watchRemovePost),
+    fork(watchUploadImages),
     fork(watchLikePost),
     fork(watchUnlikePost),
     fork(watchAddComment),
