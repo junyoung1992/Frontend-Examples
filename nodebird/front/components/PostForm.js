@@ -2,9 +2,8 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { Button, Form, Input } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { addPostRequestAction } from '../reducers/post';
 import useInput from '../hooks/useInput';
-import { UPLOAD_IMAGES_REQUEST } from '../stringLabel/action';
+import { UPLOAD_IMAGES_REQUEST, REMOVE_IMAGE, ADD_POST_REQUEST } from '../stringLabel/action';
 
 const PostForm = () => {
   const dispatch = useDispatch();
@@ -22,7 +21,30 @@ const PostForm = () => {
   }, [addPostDone]);
 
   const onSubmit = useCallback(() => {
-    dispatch(addPostRequestAction(text));
+    if (!text || !text.trim()) {
+      return alert('게시글을 작성하세요.');
+    }
+
+    // 간단하게 json 으로 보내도 되지만
+    // 공부하는 입장에서 multer 와 upload.none 을 써보기 위해 아래와 같이 구현
+    // dispatch({
+    //   type: ADD_POST_REQUEST,
+    //   data: {
+    //     content: text,
+    //     imagePaths,
+    //   },
+    // });
+
+    const formData = new FormData();
+    formData.append('content', text);
+    imagePaths.forEach((p) => {
+      formData.append('image', p);
+    });
+
+    return dispatch({
+      type: ADD_POST_REQUEST,
+      data: formData,
+    });
   }, [text]);
 
   const imageInput = useRef();
@@ -30,6 +52,8 @@ const PostForm = () => {
     imageInput.current.click();
   }, [imageInput.current]);
 
+  // 이미지와 게시글을 한 번에 업로드 할 수도 있지만
+  // 현 프로젝트에서는 이미지를 등록할 때 먼저 업로드 하고, 이후 게시글을 따로 업로드 하는 방식으로 개발함
   const onChangeImages = useCallback((e) => {
     console.log('images', e.target.files);
 
@@ -44,6 +68,16 @@ const PostForm = () => {
       data: imageFormData,
     });
   }, []);
+
+  // list 안에서 index 를 사용한 함수를 만들고 싶으면 고차 함수 사용
+  // 서버에 업로드 된 이미지는 삭제하지 않고 게시글에 등록만 되지 않게 만듬
+  // 서버에 업로드 된 이미지도 삭제하고 싶다면 REQUEST, SUCCESS, FAILURE 로 구성된 비동기 방식으로 구현 필요
+  const onRemoveImage = useCallback((index) => () => {
+    dispatch({
+      type: REMOVE_IMAGE,
+      data: index,
+    });
+  });
 
   return (
     // 파일, 이미지, 영상 등이 multipart 타입으로 업로드 됨
@@ -60,9 +94,12 @@ const PostForm = () => {
         <Button type="primary" style={{ float: 'right' }} htmlType="submit">트윗</Button>
       </div>
       <div>
-        {imagePaths.map((v) => (
+        {imagePaths.map((v, i) => (
           <div key={v} style={{ display: 'inline-block' }}>
-            <img src={v} style={{ width: '200px' }} alt={v} />
+            <img src={`http://localhost:3065/${v}`} style={{ width: '200px' }} alt={v} />
+            <div>
+              <Button onClick={onRemoveImage(i)}>제거</Button>
+            </div>
           </div>
         ))}
       </div>

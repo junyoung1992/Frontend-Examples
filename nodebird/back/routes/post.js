@@ -3,7 +3,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-const { Comment, Image, Post, User } = require('../models');
+const { Comment, Hashtag, Image, Post, User } = require('../models');
 const { isLoggedIn } = require('./middlewares');
 
 const router = express.Router();
@@ -25,7 +25,7 @@ const upload = multer({
       // node 는 파일 이름이 같은 경우 덮어씌우므로, 이를 피해서 저장해야 함
       const ext = path.extname(file.originalname); // 확장자 추출 (.png)
       const basename = path.basename(file.originalname, ext);  // 파일명 추출 (image)
-      done(null, basename + new Date().getTime() + ext);
+      done(null, basename + '_' + new Date().getTime() + ext);
     },
   }),
   limits: {
@@ -34,12 +34,33 @@ const upload = multer({
 });
 
 // POST /post
-router.post('/', isLoggedIn,  async (req, res, next) => {
+router.post('/', isLoggedIn, upload.none(),  async (req, res, next) => {
   try {
     const post = await Post.create({
       content: req.body.content,
       UserId: req.user.id,  // 로그인하고 세션에 id를 저장했기 때문에 했기 때문에 req.user.id 사용 가능
     });
+
+    const hashtags = req.body.content.match(/#[^\s#]+/g);
+    if (hashtags) {
+      const result = await Promise.all(hashtags.map(
+        // findOrCreate: 있으면 가져오고, 없으면 무시
+        (tag) => Hashtag.findOrCreate({
+          where: {name: tag.slice(1).toLowerCase() },
+        })
+      )); // 결과 값이 [value, isFind(boolean)]
+      await post.addHashtags(result.map((v) => v[0]));
+    }
+    
+    if (req.body.image) {
+      if (Array.isArray(req.body.image)) {  // 이미지를 여러 개 업로드하면 - image: [1.png, 2.png]
+        const images = await Promise.all(req.body.image.map((image) => Image.create({ src: image })));
+        await post.addImages(images);
+      } else {  // 이미지를 하나만 업로드하면 - image: 1.png
+        const image = await Image.create({ src: req.body.image });
+        await post.addImages(image);
+      }
+    }
     
     const fullPost = await Post.findOne({
       where: { id: post.id },
@@ -75,6 +96,79 @@ router.post('/images', isLoggedIn, upload.array('image'), async (req, res, next)
   // 이미지 업로드는 upload.array('image') 에서 실행되고, 함수 내부에는 업로드 후의 동작을 작성
   // 이미지는 req.file 에 들어있음
   res.status(200).json(req.files.map((v) => v.filename));
+});
+
+// POST /post/1/retweet
+router.post('/:postId/retweet', isLoggedIn, async (req, res, next) => {
+  try {
+    const post = await Post.findOne({
+      where: { id: req.params.postId },
+      include: [{
+        model: Post,
+        as: 'Retweet',
+      }],
+    });
+    if (!post) {
+      return res.status(403).send('존재하지 않는 게시글입니다.');
+    }
+    
+    if(req.user.id === post.UserId || (post.Retweet && req.user.id === post.Retweet.UserId)) {
+      return res.status(403).send('자신의 글은 리트윗할 수 없습니다.');
+    }
+    
+    // 리트윗 한 글인 경우 원본 글의 id 를 저장하고, 아닌 경우 해당 글의 id 를 저장한다.
+    const retweetTargetId = post.RetweetId || post.id;
+    
+    const exPost = await Post.findOne({
+      where: {
+        UserId: req.user.id,
+        RetweetId: retweetTargetId,
+      }
+    });
+    if (exPost) {
+      return res.status(403).send('이미 리트윗한 글입니다.');
+    }
+    
+    const retweet = await Post.create({
+      UserId: req.user.id,
+      RetweetId: retweetTargetId,
+      content: 'retweet',
+    });
+    
+    const retweetWithPrevPost = await Post.findOne({
+      where: { id: retweet.id },
+      include: [{
+        model: Post,
+        as: 'Retweet',
+        include: [{
+          model: Image,
+        }, {
+          model: User,  // 리트윗 원본 게시글의 작성자
+          attributes: ['id', 'nickname'],
+        }],
+      }, {
+        model: User,  // 리트윗을 하는 유저의 정보
+        attributes: ['id', 'nickname'],
+      }, {
+        model: Image,
+      }, {
+        model: User,  // 좋아요 누른 사람
+        as: 'Likers',
+        attributes: ['id', 'nickname'],
+      }, {
+        model: Comment,
+        include: [{
+          model: User,  // 내 게시글의 댓글의 작성자
+          attributes: ['id', 'nickname'],
+        }],
+      }],
+    });
+
+    res.status(200).json(retweetWithPrevPost);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
 });
 
 // PATCH /post/1/like

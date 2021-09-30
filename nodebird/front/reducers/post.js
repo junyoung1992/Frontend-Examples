@@ -20,7 +20,12 @@ import {
   UNLIKE_POST_SUCCESS,
   UNLIKE_POST_FAILURE,
   UPLOAD_IMAGES_REQUEST,
-  UPLOAD_IMAGES_SUCCESS, UPLOAD_IMAGES_FAILURE,
+  UPLOAD_IMAGES_SUCCESS,
+  UPLOAD_IMAGES_FAILURE,
+  REMOVE_IMAGE,
+  RETWEET_REQUEST,
+  RETWEET_SUCCESS,
+  RETWEET_FAILURE,
 } from '../stringLabel/action';
 
 export const initialState = {
@@ -48,12 +53,10 @@ export const initialState = {
   addCommentLoading: false,
   addCommentDone: false,
   addCommentError: null,
+  retweetLoading: false,
+  retweetDone: false,
+  retweetError: null,
 };
-
-export const addPostRequestAction = (data) => ({
-  type: ADD_POST_REQUEST,
-  data,
-});
 
 export const addCommentRequestAction = (data) => ({
   type: ADD_COMMENT_REQUEST,
@@ -88,6 +91,7 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.addPostLoading = false;
       draft.addPostDone = true;
       draft.mainPosts.unshift(action.data); // unshift 를 통해 배열에 추가 가능
+      draft.imagePaths = [];
       break;
     case ADD_POST_FAILURE:
       draft.addPostLoading = false;
@@ -121,6 +125,9 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.uploadImagesLoading = false;
       draft.uploadImagesError = action.error;
       break;
+    case REMOVE_IMAGE:
+      draft.imagePaths = draft.imagePaths.filter((v, i) => i !== action.data);
+      break;
     case LIKE_POST_REQUEST:
       draft.likePostLoading = true;
       draft.likePostDone = false;
@@ -133,6 +140,20 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.likePostDone = true;
       break;
     }
+    case RETWEET_REQUEST:
+      draft.retweetLoading = true;
+      draft.retweetDone = false;
+      draft.retweetError = null;
+      break;
+    case RETWEET_SUCCESS:
+      draft.mainPosts.unshift(action.data);
+      draft.retweetLoading = false;
+      draft.retweetDone = true;
+      break;
+    case RETWEET_FAILURE:
+      draft.retweetLoading = false;
+      draft.retweetError = action.error;
+      break;
     case LIKE_POST_FAILURE:
       draft.likePostLoading = false;
       draft.likePostError = action.error;

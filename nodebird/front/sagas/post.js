@@ -24,7 +24,7 @@ import {
   LIKE_POST_FAILURE,
   UPLOAD_IMAGES_REQUEST,
   UPLOAD_IMAGES_SUCCESS,
-  UPLOAD_IMAGES_FAILURE,
+  UPLOAD_IMAGES_FAILURE, RETWEET_SUCCESS, RETWEET_FAILURE, RETWEET_REQUEST,
 } from '../stringLabel/action';
 
 function loadPostsAPI(data) {
@@ -48,10 +48,7 @@ function* loadPosts(action) {
 }
 
 function addPostAPI(data) {
-  return axios.post(
-    '/post',
-    { content: data },
-  );
+  return axios.post('/post', data);
 }
 
 function* addPost(action) {
@@ -99,7 +96,8 @@ function* removePost(action) {
 }
 
 function uploadImagesAPI(data) {
-  return axios.post('/post/images', data); // form 데이터는 {} 로 감싸면 절대 안됨. {} 로 감싸면 json 이 되버림
+  // form 데이터는 {} 로 감싸면 절대 안됨. {} 로 감싸면 json 이 되버림
+  return axios.post('/post/images', data);
 }
 
 function* uploadImages(action) {
@@ -113,6 +111,27 @@ function* uploadImages(action) {
   } catch (err) {
     yield put({
       type: UPLOAD_IMAGES_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function retweetAPI(data) {
+  return axios.post(`/post/${data}/retweet`);
+}
+
+function* retweet(action) {
+  try {
+    const result = yield call(retweetAPI, action.data);
+
+    yield put({
+      type: RETWEET_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: RETWEET_FAILURE,
       error: err.response.data,
     });
   }
@@ -205,6 +224,10 @@ function* watchUploadImages() {
   yield takeEvery(UPLOAD_IMAGES_REQUEST, uploadImages);
 }
 
+function* retweetComment() {
+  yield takeEvery(RETWEET_REQUEST, retweet);
+}
+
 function* watchLikePost() {
   yield takeEvery(LIKE_POST_REQUEST, likePost);
 }
@@ -226,5 +249,6 @@ export default function* postSaga() {
     fork(watchLikePost),
     fork(watchUnlikePost),
     fork(watchAddComment),
+    fork(retweetComment),
   ]);
 }

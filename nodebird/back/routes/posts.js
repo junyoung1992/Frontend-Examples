@@ -29,6 +29,15 @@ router.get('/',  async (req, res, next) => {
           model: User,  // 댓글 작성자
           attributes: ['id', 'nickname'],
         }],
+      }, {
+        model: Post,
+        as: 'Retweet',
+        include: [{
+          model: Image,
+        }, {
+          model: User,  // 리트윗 원본 게시글의 작성자
+          attributes: ['id', 'nickname'],
+        }],
       }]
     });
     res.status(200).json(posts);

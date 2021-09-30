@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
+const path = require("path");
 
 const postRouter = require('./routes/post');
 const postsRouter = require('./routes/posts');
@@ -32,6 +33,9 @@ app.use(cors({
   origin: 'http://localhost:3060', // 해당 주소의 요청만 허용하겠다.
   credentials: true,  // true 로 설정해야 쿠키도 같이 전달함
 }));
+
+// path.join(__dirname, 'uploads')) 를 http://localhost:3065 를 통해 연결 가능하게 static 으로 등록
+app.use('/', express.static(path.join(__dirname, 'uploads')));
 // Json 형식의 데이터를 사용할 수 있음
 app.use(express.json());
 // Form Submit 을 하면 urlencoded 방식으로 데이터가 전송되는데 이를 사용할 수 있게 함
