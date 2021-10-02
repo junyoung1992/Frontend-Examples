@@ -1,4 +1,5 @@
 const express = require('express');
+const { Op } = require('sequelize');
 
 const { Comment, Image, Post, User, } = require('../models');
 
@@ -6,7 +7,17 @@ const router = express.Router();
 
 router.get('/',  async (req, res, next) => {
   try {
+    const where = {};
+    
+    // 초기 로딩이 아닌 경우
+    if (parseInt(req.query.lastId, 10)) {
+      // sequlize.Op.lt 를 사용하면
+      // 아래 조건이 'id 가 req.query.lastId 보다 작은 것' 을 의미하도록 설정 가능
+      where.id = { [Op.lt]: parseInt(req.query.lastId, 10) };
+    }
+    
     const posts = await Post.findAll({
+      where,
       limit: 10,  // 게시글 10개 조회
       order: [
         ['createdAt', 'DESC'],

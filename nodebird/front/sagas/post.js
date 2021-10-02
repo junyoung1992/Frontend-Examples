@@ -27,13 +27,14 @@ import {
   UPLOAD_IMAGES_FAILURE, RETWEET_SUCCESS, RETWEET_FAILURE, RETWEET_REQUEST,
 } from '../stringLabel/action';
 
-function loadPostsAPI(data) {
-  return axios.get('/posts', data);
+function loadPostsAPI(lastId) {
+  // lastId 가 undefined 인 경우 0으로 설정
+  return axios.get(`/posts?lastId=${lastId || 0}`);
 }
 
 function* loadPosts(action) {
   try {
-    const result = yield call(loadPostsAPI, action.data);
+    const result = yield call(loadPostsAPI, action.lastId);
 
     yield put({
       type: LOAD_POSTS_SUCCESS,

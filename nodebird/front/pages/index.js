@@ -10,7 +10,9 @@ import { LOAD_MY_INFO_REQUEST, LOAD_POSTS_REQUEST } from '../stringLabel/action'
 const Home = () => {
   const dispatch = useDispatch();
   const { me } = useSelector((state) => state.user);
-  const { mainPosts, hasMorePosts, loadPostsLoading, retweetError } = useSelector((state) => state.post);
+  const { mainPosts, hasMorePosts, loadPostsLoading, retweetError } = useSelector(
+    (state) => state.post,
+  );
 
   useEffect(() => {
     if (retweetError) {
@@ -34,8 +36,10 @@ const Home = () => {
       if (window.scrollY + document.documentElement.clientHeight
           > document.documentElement.scrollHeight - 300) {
         if (hasMorePosts && !loadPostsLoading) {
+          const lastId = mainPosts[mainPosts.length - 1]?.id;
           dispatch({
             type: LOAD_POSTS_REQUEST,
+            lastId,
           });
         }
       }
