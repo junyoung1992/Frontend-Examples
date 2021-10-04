@@ -33,6 +33,52 @@ const upload = multer({
   }
 });
 
+// GET /post/1
+router.get('/:postId', async (req, res, next) => {
+  try {
+    const post = await Post.findOne({
+      where: { id: req.params.postId },
+    });
+    if (!post) {
+      return res.status(404).send('존재하지 않는 게시글입니다.');
+    }
+
+    const fullPost = await Post.findOne({
+      where: { id: post.id },
+      include: [{
+        model: Post,
+        as: 'Retweet',
+        include: [{
+          model: Image,
+        }, {
+          model: User,  // 리트윗 원본 게시글의 작성자
+          attributes: ['id', 'nickname'],
+        }],
+      }, {
+        model: User,  // 리트윗을 하는 유저의 정보
+        attributes: ['id', 'nickname'],
+      }, {
+        model: Image,
+      }, {
+        model: User,  // 좋아요 누른 사람
+        as: 'Likers',
+        attributes: ['id', 'nickname'],
+      }, {
+        model: Comment,
+        include: [{
+          model: User,  // 내 게시글의 댓글의 작성자
+          attributes: ['id', 'nickname'],
+        }],
+      }],
+    });
+
+    res.status(200).json(fullPost);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 // POST /post
 router.post('/', isLoggedIn, upload.none(),  async (req, res, next) => {
   try {
@@ -98,6 +144,38 @@ router.post('/images', isLoggedIn, upload.array('image'), async (req, res, next)
   res.status(200).json(req.files.map((v) => v.filename));
 });
 
+// POST /post/1/comment
+router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {
+  try {
+    const post = await Post.findOne({
+      where: { id: req.params.postId },
+    });
+
+    if (!post) {
+      return res.status(404).send('존재하지 않는 게시글입니다.');
+    }
+
+    const comment = await Comment.create({
+      content: req.body.content,
+      PostId: req.params.postId,
+      UserId: req.user.id,
+    });
+
+    const fullComment = await Comment.findOne({
+      where: { id: comment.id },
+      include: [{
+        model: User,
+        attributes: ['id', 'nickname'],
+      }],
+    })
+
+    res.status(201).json(fullComment);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 // POST /post/1/retweet
 router.post('/:postId/retweet', isLoggedIn, async (req, res, next) => {
   try {
@@ -109,11 +187,11 @@ router.post('/:postId/retweet', isLoggedIn, async (req, res, next) => {
       }],
     });
     if (!post) {
-      return res.status(403).send('존재하지 않는 게시글입니다.');
+      return res.status(404).send('존재하지 않는 게시글입니다.');
     }
     
     if(req.user.id === post.UserId || (post.Retweet && req.user.id === post.Retweet.UserId)) {
-      return res.status(403).send('자신의 글은 리트윗할 수 없습니다.');
+      return res.status(404).send('자신의 글은 리트윗할 수 없습니다.');
     }
     
     // 리트윗 한 글인 경우 원본 글의 id 를 저장하고, 아닌 경우 해당 글의 id 를 저장한다.
@@ -126,7 +204,7 @@ router.post('/:postId/retweet', isLoggedIn, async (req, res, next) => {
       }
     });
     if (exPost) {
-      return res.status(403).send('이미 리트윗한 글입니다.');
+      return res.status(404).send('이미 리트윗한 글입니다.');
     }
     
     const retweet = await Post.create({
@@ -164,7 +242,7 @@ router.post('/:postId/retweet', isLoggedIn, async (req, res, next) => {
       }],
     });
 
-    res.status(200).json(retweetWithPrevPost);
+    res.status(201).json(retweetWithPrevPost);
   } catch (error) {
     console.error(error);
     next(error);
@@ -179,7 +257,7 @@ router.patch('/:postId/like', isLoggedIn, async (req, res, next) => {
     });
 
     if (!post) {
-      return res.status(403).send('존재하지 않는 게시글입니다.');
+      return res.status(404).send('존재하지 않는 게시글입니다.');
     }
     
     await post.addLikers(req.user.id); // Sequelize 가 테이블의 관계를 이용해 데이터를 추가해줌
@@ -188,58 +266,6 @@ router.patch('/:postId/like', isLoggedIn, async (req, res, next) => {
   } catch (error) {
    console.error(error);
    next(error);
-  }
-});
-
-// DELETE /post/1/like
-router.delete('/:postId/like', isLoggedIn, async (req, res, next) => {
-  try {
-    const post = await Post.findOne({
-      where: { id: req.params.postId },
-    });
-
-    if (!post) {
-      return res.status(403).send('존재하지 않는 게시글입니다.');
-    }
-
-    await post.removeLikers(req.user.id); // Sequelize 가 테이블의 관계를 이용해 데이터를 추가해줌
-
-    res.status(200).json({ PostId: post.id, UserId: req.user.id });
-  } catch (error) {
-    console.error(error);
-    next(error);
-  }
-});
-
-// POST /post/1/comment
-router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {
-  try {
-    const post = await Post.findOne({
-      where: { id: req.params.postId },
-    });
-    
-    if (!post) {
-      return res.status(403).send('존재하지 않는 게시글입니다.');
-    }
-    
-    const comment = await Comment.create({
-      content: req.body.content,
-      PostId: req.params.postId,
-      UserId: req.user.id,
-    });
-    
-    const fullComment = await Comment.findOne({
-      where: { id: comment.id },
-      include: [{
-        model: User,
-        attributes: ['id', 'nickname'],
-      }],
-    })
-
-    res.status(201).json(fullComment);
-  } catch (error) {
-    console.error(error);
-    next(error);
   }
 });
 
@@ -252,8 +278,28 @@ router.delete('/:postId', isLoggedIn, async (req, res, next) => {
         UserId: req.user.id,
       },
     });
-    
+
     res.status(200).json({ PostId: parseInt(req.params.postId) });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+// DELETE /post/1/like
+router.delete('/:postId/like', isLoggedIn, async (req, res, next) => {
+  try {
+    const post = await Post.findOne({
+      where: { id: req.params.postId },
+    });
+
+    if (!post) {
+      return res.status(404).send('존재하지 않는 게시글입니다.');
+    }
+
+    await post.removeLikers(req.user.id); // Sequelize 가 테이블의 관계를 이용해 데이터를 추가해줌
+
+    res.status(200).json({ PostId: post.id, UserId: req.user.id });
   } catch (error) {
     console.error(error);
     next(error);

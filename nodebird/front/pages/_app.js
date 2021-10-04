@@ -1,5 +1,5 @@
 /**
- * _app.js 는 pages 희 공통 부분
+ * _app.js 는 pages 의 공통 부분
  * Component 에 index.js return 부분이 들어감
  * _app.js 가 index.js 의 부모인 셈
  * 따라서 공통적으로 들어가는 것들을 적어주면 됨

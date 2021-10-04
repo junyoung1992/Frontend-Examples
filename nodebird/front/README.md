@@ -35,6 +35,10 @@
     - immutable.js보다 편함
 - Faker
     - 각종 더미데이터 생성
+- Babel Plugin Styled Components
+    - CSS 서버사이드 렌더링을 위해 사용
+- SWR
+    - Redux 에서 사용하는 action 을 간단하게 만들어 줌
 
 ```
 npm install \
@@ -43,6 +47,7 @@ npm install \
     next-redux-wrapper react-redux \
     react-slick \
     redux-saga axios shortid immer faker \
+    babel-plugin-styled-components swr \
     --save
 ```
 

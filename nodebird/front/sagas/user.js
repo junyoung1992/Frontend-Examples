@@ -28,7 +28,12 @@ import {
   LOAD_FOLLOWINGS_SUCCESS,
   LOAD_FOLLOWINGS_REQUEST,
   LOAD_FOLLOWERS_SUCCESS,
-  LOAD_FOLLOWERS_FAILURE, REMOVE_FOLLOWER_REQUEST, REMOVE_FOLLOWER_SUCCESS, REMOVE_FOLLOWER_FAILURE,
+  LOAD_FOLLOWERS_FAILURE,
+  REMOVE_FOLLOWER_REQUEST,
+  REMOVE_FOLLOWER_SUCCESS,
+  REMOVE_FOLLOWER_FAILURE,
+  LOAD_USER_SUCCESS,
+  LOAD_USER_FAILURE, LOAD_USER_REQUEST,
 } from '../stringLabel/action';
 
 function loadMyInfoAPI() {
@@ -46,6 +51,26 @@ function* loadMyInfo() {
   } catch (err) {
     yield put({
       type: LOAD_MY_INFO_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function loadUserAPI(data) {
+  return axios.get(`/user/${data}`);
+}
+
+function* loadUser(action) {
+  try {
+    const result = yield call(loadUserAPI, action.data);
+
+    yield put({
+      type: LOAD_USER_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: LOAD_USER_FAILURE,
       error: err.response.data,
     });
   }
@@ -235,6 +260,10 @@ function* watchLoadMyInfo() {
   yield takeEvery(LOAD_MY_INFO_REQUEST, loadMyInfo);
 }
 
+function* watchLoadUser() {
+  yield takeEvery(LOAD_USER_REQUEST, loadUser);
+}
+
 function* watchLoadFollowings() {
   yield takeEvery(LOAD_FOLLOWINGS_REQUEST, loadFollowings);
 }
@@ -281,6 +310,7 @@ function* watchRemoveFollower() {
 export default function* userSaga() {
   yield all([
     fork(watchLoadMyInfo),
+    fork(watchLoadUser),
     fork(watchLoadFollowings),
     fork(watchLoadFollowers),
     fork(watchLogin), // fork 와 call 의 차이를 알아야 함

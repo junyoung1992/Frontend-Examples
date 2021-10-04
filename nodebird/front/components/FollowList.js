@@ -5,7 +5,7 @@ import { StopOutlined } from '@ant-design/icons';
 import { useDispatch } from 'react-redux';
 import { REMOVE_FOLLOWER_REQUEST, UNFOLLOW_REQUEST } from '../stringLabel/action';
 
-const FollowList = ({ header, data }) => {
+const FollowList = ({ header, data, onClickMore, loading }) => {
   const dispatch = useDispatch();
 
   // 반복문 안에서 onClick 이 사용될 때, 고차 함수를 사용하면 반복문 내 데이터를 넘겨줄 수 있음
@@ -29,7 +29,11 @@ const FollowList = ({ header, data }) => {
       grid={{ gutter: 4, xs: 2, md: 3 }} // 그리드 사이 공간이 gutter
       size="small"
       header={<div>{header}</div>}
-      loadMore={<div style={{ textAlign: 'center', margin: '10px 0' }}><Button>더 보기</Button></div>}
+      loadMore={(
+        <div style={{ textAlign: 'center', margin: '10px 0' }}>
+          <Button onClick={onClickMore} loading={loading}>더 보기</Button>
+        </div>
+      )}
       bordered
       dataSource={data}
       renderItem={(item) => ( // 배열 내 item 들이 renderItem 을 통해 표현
@@ -46,6 +50,8 @@ const FollowList = ({ header, data }) => {
 FollowList.propTypes = {
   header: PropTypes.string.isRequired,
   data: PropTypes.array.isRequired,
+  onClickMore: PropTypes.func.isRequired,
+  loading: PropTypes.bool.isRequired,
 };
 
 export default FollowList;
