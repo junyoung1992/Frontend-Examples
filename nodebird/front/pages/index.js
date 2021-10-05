@@ -95,7 +95,7 @@ const Home = () => {
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async ({ req }) => {
     console.log('getServerSideProps start');
-    console.log(req.headers);
+    // console.log(req.headers);
 
     // 브라우저를 거치지 않고 프론트 서버와 백엔드 서버가 직접 통신하므로 쿠키가 전달되지 않음
     // 아래와 같이 작성해야 서버에 쿠키를 전달할 수 있음
@@ -118,6 +118,8 @@ export const getServerSideProps = wrapper.getServerSideProps(
     store.dispatch(END);
     console.log('getServerSideProps end');
     await store.sagaTask.toPromise();
+
+    // return 을 사용하면 SWR 도 SSR 사용 가능
   },
 );
 

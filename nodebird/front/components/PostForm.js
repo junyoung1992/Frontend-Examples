@@ -55,7 +55,7 @@ const PostForm = () => {
   // 이미지와 게시글을 한 번에 업로드 할 수도 있지만
   // 현 프로젝트에서는 이미지를 등록할 때 먼저 업로드 하고, 이후 게시글을 따로 업로드 하는 방식으로 개발함
   const onChangeImages = useCallback((e) => {
-    console.log('images', e.target.files);
+    // console.log('images', e.target.files);
 
     const imageFormData = new FormData(); // FormData 를 사용하면 multipart 데이터로 보낼 수 있음
     [].forEach.call(e.target.files, (f) => {

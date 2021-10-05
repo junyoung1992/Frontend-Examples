@@ -5,7 +5,6 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 
 import AppLayout from '../../components/AppLayout';
-import PostForm from '../../components/PostForm';
 import PostCard from '../../components/PostCard';
 
 import wrapper from '../../store/configureStore';
@@ -61,7 +60,7 @@ const Hashtag = () => {
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async ({ req, res, params }) => {
     console.log('getServerSideProps start');
-    console.log(req.headers);
+    // console.log(req.headers);
 
     const cookie = req ? req.headers.cookie : '';
     axios.defaults.headers.Cookie = '';

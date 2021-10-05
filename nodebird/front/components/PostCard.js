@@ -4,12 +4,16 @@ import { EllipsisOutlined, HeartOutlined, HeartTwoTone, MessageOutlined, Retweet
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import Link from 'next/link';
+import moment from 'moment';
 
 import CommentForm from './CommentForm';
 import PostImages from './PostImages';
 import PostCardContent from './PostCardContent';
 import FollowButton from './FollowButton';
 import { REMOVE_POST_REQUEST, LIKE_POST_REQUEST, UNLIKE_POST_REQUEST, RETWEET_REQUEST } from '../stringLabel/action';
+
+// 기본 locale 이 영어이기 때문에 한글로 바꿔줌
+moment.locale('ko');
 
 const PostCard = ({ post }) => {
   const dispatch = useDispatch();
@@ -95,6 +99,7 @@ const PostCard = ({ post }) => {
             <Card
               cover={post.Retweet.Images[0] && <PostImages images={post.Retweet.Images} />}
             >
+              <div style={{ float: 'right' }}>{moment(post.createdAt).format('YYYY.MM.DD')}</div>
               <Card.Meta
                 avatar={(
                   <Link href={`/user/${post.Retweet.User.id}`}>
@@ -107,15 +112,18 @@ const PostCard = ({ post }) => {
             </Card>
           )
           : (
-            <Card.Meta
-              avatar={(
-                <Link href={`/user/${post.User.id}`}>
-                  <Avatar>{post.User.nickname[0]}</Avatar>
-                </Link>
-              )}
-              title={post.User.nickname}
-              description={<PostCardContent postData={post.content} />}
-            />
+            <>
+              <div style={{ float: 'right' }}>{moment(post.createdAt).format('YYYY.MM.DD')}</div>
+              <Card.Meta
+                avatar={(
+                  <Link href={`/user/${post.User.id}`}>
+                    <Avatar>{post.User.nickname[0]}</Avatar>
+                  </Link>
+                )}
+                title={post.User.nickname}
+                description={<PostCardContent postData={post.content} />}
+              />
+            </>
           )}
       </Card>
       { commentFormOpened && (
@@ -153,6 +161,7 @@ PostCard.propTypes = {
       nickname: PropTypes.string,
     }),
     content: PropTypes.string,
+    createdAt: PropTypes.string,
     RetweetId: PropTypes.number,
     Comments: PropTypes.arrayOf(PropTypes.object),
     Images: PropTypes.arrayOf(PropTypes.object),

@@ -39,6 +39,9 @@
     - CSS 서버사이드 렌더링을 위해 사용
 - SWR
     - Redux 에서 사용하는 action 을 간단하게 만들어 줌
+- Moment
+    - 날짜 라이브러리
+- @next/bundle-analyzer
 
 ```
 npm install \
@@ -47,7 +50,8 @@ npm install \
     next-redux-wrapper react-redux \
     react-slick \
     redux-saga axios shortid immer faker \
-    babel-plugin-styled-components swr \
+    babel-plugin-styled-components swr moment \
+    @next/bundle-analyzer \
     --save
 ```
 

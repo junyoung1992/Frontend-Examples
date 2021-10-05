@@ -67,7 +67,8 @@ const Signup = () => {
     if (!term) {
       return setTermError(true);
     }
-    console.log(email, nickname, password);
+    // console.log(email, nickname, password);
+
     return dispatch({
       type: SIGN_UP_REQUEST,
       data: {
@@ -120,7 +121,7 @@ const Signup = () => {
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async ({ req }) => {
     console.log('getServerSideProps start');
-    console.log(req.headers);
+    // console.log(req.headers);
 
     const cookie = req ? req.headers.cookie : '';
     axios.defaults.headers.Cookie = '';

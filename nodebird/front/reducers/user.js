@@ -1,4 +1,6 @@
-import produce from 'immer';
+// import produce from 'immer';
+import produce from '../util/produce';
+
 import {
   ADD_POST_TO_ME,
   CHANGE_NICKNAME_FAILURE,

@@ -1,4 +1,5 @@
-import produce from 'immer';
+// import produce from 'immer';
+import produce from '../util/produce';
 
 import {
   LOAD_POSTS_FAILURE,

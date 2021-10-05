@@ -56,9 +56,13 @@ const AppLayout = ({ children }) => {
             onSearch={onSearch}
           />
         </Menu.Item>
-        <Menu.Item>
-          <Link href="/signup"><a>회원가입</a></Link>
-        </Menu.Item>
+        { me
+          ? null
+          : (
+            <Menu.Item>
+              <Link href="/signup"><a>회원가입</a></Link>
+            </Menu.Item>
+          ) }
       </Menu>
 
       {/* 그리드: 24분할 */}

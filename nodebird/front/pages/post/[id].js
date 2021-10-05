@@ -43,7 +43,7 @@ const Post = () => {
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async ({ req, res, params }) => {
     console.log('getServerSideProps start');
-    console.log(req.headers);
+    // console.log(req.headers);
 
     const cookie = req ? req.headers.cookie : '';
     axios.defaults.headers.Cookie = '';
