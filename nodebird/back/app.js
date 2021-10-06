@@ -5,7 +5,9 @@ const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
-const path = require("path");
+const path = require('path');
+const hpp = require('hpp');
+const helmet = require('helmet');
 
 const hashtagRouter = require('./routes/hashtag');
 const postRouter = require('./routes/post');
@@ -28,10 +30,16 @@ db.sequelize.sync()
 // 로그인 기능 추가
 passportConfig();
 
-app.use(morgan('dev'));
+if (process.env.NODE_ENV === 'production') {
+  app.use(morgan('comnbined')); // 로그가 자세히 남음
+  app.use(hpp()); // 보안용
+  app.use(helmet());
+} else {
+  app.use(morgan('dev'));
+}
 // CORS 회피
 app.use(cors({
-  origin: 'http://localhost:3060', // 해당 주소의 요청만 허용하겠다.
+  origin: ['http://localhost:3060'], // 해당 주소의 요청만 허용하겠다.
   credentials: true,  // true 로 설정해야 쿠키도 같이 전달함
 }));
 

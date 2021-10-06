@@ -30,6 +30,15 @@
     - 프론트에서 백엔드로 보낸 요청이 기록됨 - 디버깅 용이
 12. multer
     - multipart 를 백엔드에서 처리할 수 있음
+13. pm2
+    - 백그라운드에서 node 실행 및 모니터링, 관리
+    - `pm2 start app.js`
+    - `npx pm2 list`
+    - `npx pm2 monit`
+    - `npx pm2 reload`
+    - `npx pm2 kill`
+14. hpp
+15. helmet
 
 ```
 npm install \
