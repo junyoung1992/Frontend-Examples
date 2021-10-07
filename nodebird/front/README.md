@@ -61,3 +61,11 @@ npm install -D
     babel-eslint eslint-config-airbnb eslint-plugin-import eslint-plugin-react-hooks eslint-plugin-jsx-a11y\
     redux-devtools-extension
 ```
+
+```
+npm run dev
+
+npm build
+
+npx pm2 start npm -- start
+```

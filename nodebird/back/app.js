@@ -39,7 +39,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 // CORS 회피
 app.use(cors({
-  origin: ['http://localhost:3060'], // 해당 주소의 요청만 허용하겠다.
+  origin: ['http://localhost:3060', 'http://3.34.127.83:80'], // 해당 주소의 요청만 허용하겠다.
   credentials: true,  // true 로 설정해야 쿠키도 같이 전달함
 }));
 
