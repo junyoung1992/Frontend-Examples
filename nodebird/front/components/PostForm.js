@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import useInput from '../hooks/useInput';
 import { UPLOAD_IMAGES_REQUEST, REMOVE_IMAGE, ADD_POST_REQUEST } from '../stringLabel/action';
-import {backUrl} from "../config/config";
+import { backUrl } from '../config/config';
 
 const PostForm = () => {
   const dispatch = useDispatch();

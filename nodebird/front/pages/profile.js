@@ -11,7 +11,7 @@ import NicknameEditForm from '../components/NicknameEditForm';
 import FollowList from '../components/FollowList';
 import wrapper from '../store/configureStore';
 import { LOAD_MY_INFO_REQUEST } from '../stringLabel/action';
-import {backUrl} from "../config/config";
+import { backUrl } from '../config/config';
 
 const fetcher = (url) => axios.get(url, { withCredentials: true })
   .then((result) => result.data);

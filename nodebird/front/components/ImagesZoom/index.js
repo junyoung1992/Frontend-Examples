@@ -3,7 +3,7 @@ import Slick from 'react-slick';
 import PropTypes from 'prop-types';
 
 import { CloseBtn, Global, Header, ImageWrapper, Indicator, Overlay, SlickWrapper } from './styles';
-import {backUrl} from "../../config/config";
+import { backUrl } from '../../config/config';
 
 const ImagesZoom = ({ images, onClose }) => {
   // 컴포넌트가 렌더릴될 떄마다 실행

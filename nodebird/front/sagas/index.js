@@ -9,7 +9,7 @@ import axios from 'axios';
 
 import postSaga from './post';
 import userSaga from './user';
-import {backUrl} from "../config/config";
+import { backUrl } from '../config/config';
 
 axios.defaults.baseURL = backUrl;
 axios.defaults.withCredentials = true; // 요청 메시지를 보낼 때 쿠키도 함께 전송

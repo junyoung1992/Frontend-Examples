@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { PlusOutlined } from '@ant-design/icons';
 
 import ImagesZoom from './ImagesZoom';
-import {backUrl} from "../config/config";
+import { backUrl } from '../config/config';
 
 const PostImages = ({ images }) => {
   const [showImagesZoom, setShowImagesZoom] = useState(false);
