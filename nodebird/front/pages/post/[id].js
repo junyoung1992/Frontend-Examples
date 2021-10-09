@@ -30,6 +30,7 @@ const Post = () => {
         </title>
         <meta name="description" content={singlePost.content} />
         {/* og:~~~ 카톡, 페북 등에 공유하면 뜨는 정보 */}
+        {/* 검색엔진 최적화 하려면 서버사이드 렌더링 잘하고 이런 메타 정보도 잘 적어줘야 함 */}
         <meta property="og:title" content={`${singlePost.User.nickname}님의 게시글`} />
         <meta property="og:description" content={singlePost.content} />
         <meta property="og:image" content={singlePost.Images[0] ? singlePost.Images[0].src : 'https://nodebird.com/favicon.ico'} />
@@ -42,7 +43,7 @@ const Post = () => {
 
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async ({ req, res, params }) => {
-    console.log('getServerSideProps start');
+    // console.log('getServerSideProps start');
     // console.log(req.headers);
 
     const cookie = req ? req.headers.cookie : '';
@@ -60,7 +61,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
     });
 
     store.dispatch(END);
-    console.log('getServerSideProps end');
+    // console.log('getServerSideProps end');
     await store.sagaTask.toPromise();
   },
 );

@@ -94,7 +94,7 @@ const Home = () => {
 // https://github.com/kirill-konshin/next-redux-wrapper#upgrade-from-6x-to-7x
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async ({ req }) => {
-    console.log('getServerSideProps start');
+    // console.log('getServerSideProps start');
     // console.log(req.headers);
 
     // 브라우저를 거치지 않고 프론트 서버와 백엔드 서버가 직접 통신하므로 쿠키가 전달되지 않음
@@ -116,7 +116,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     // REQUEST 가 SUCCESS 로 바뀔 때까지 기다림
     store.dispatch(END);
-    console.log('getServerSideProps end');
+    // console.log('getServerSideProps end');
     await store.sagaTask.toPromise();
 
     // return 을 사용하면 SWR 도 SSR 사용 가능

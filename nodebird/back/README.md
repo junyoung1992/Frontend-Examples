@@ -37,6 +37,9 @@
     - `npx pm2 monit`
     - `npx pm2 reload`
     - `npx pm2 kill`
+    - `npx pm2 stop ~~~`
+    - `npx pm2 restart ~~~`
+    - `npx pm2 delete ~~~`
 14. hpp
 15. helmet
 

@@ -72,7 +72,7 @@ const Profile = () => {
 
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async ({ req }) => {
-    console.log('getServerSideProps start');
+    // console.log('getServerSideProps start');
     // console.log(req.headers);
 
     const cookie = req ? req.headers.cookie : '';
@@ -86,7 +86,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
     });
 
     store.dispatch(END);
-    console.log('getServerSideProps end');
+    // console.log('getServerSideProps end');
     await store.sagaTask.toPromise();
   },
 );

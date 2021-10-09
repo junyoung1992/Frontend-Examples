@@ -10,7 +10,13 @@ import CommentForm from './CommentForm';
 import PostImages from './PostImages';
 import PostCardContent from './PostCardContent';
 import FollowButton from './FollowButton';
-import { REMOVE_POST_REQUEST, LIKE_POST_REQUEST, UNLIKE_POST_REQUEST, RETWEET_REQUEST } from '../stringLabel/action';
+import {
+  REMOVE_POST_REQUEST,
+  LIKE_POST_REQUEST,
+  UNLIKE_POST_REQUEST,
+  RETWEET_REQUEST,
+  UPDATE_POST_REQUEST,
+} from '../stringLabel/action';
 
 // 기본 locale 이 영어이기 때문에 한글로 바꿔줌
 moment.locale('ko');
@@ -23,6 +29,7 @@ const PostCard = ({ post }) => {
   // const id = me?.id;  // 있으면 id가 들어가고 없으면 undefined 가 들어감
   const id = useSelector((state) => state.user.me?.id);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
+  const [editMode, setEditMode] = useState(false);
   const liked = post.Likers.find((v) => v.id === id);
 
   const onLike = useCallback(() => {
@@ -41,6 +48,24 @@ const PostCard = ({ post }) => {
   const onToggleComment = useCallback(() => {
     setCommentFormOpened((prev) => !prev);
   }, []);
+
+  const onClickUpdate = useCallback(() => {
+    setEditMode(true);
+  }, []);
+
+  const onCancelUpdate = useCallback(() => {
+    setEditMode(false);
+  }, []);
+
+  const onChangePost = useCallback((editText) => () => {
+    dispatch({
+      type: UPDATE_POST_REQUEST,
+      data: {
+        PostId: post.id,
+        content: editText,
+      },
+    });
+  }, [post]);
 
   const onRemovePost = useCallback(() => {
     dispatch({
@@ -77,7 +102,7 @@ const PostCard = ({ post }) => {
                 {id && post.User.id === id
                   ? (
                     <>
-                      <Button>수정</Button>
+                      {!post.RetweetId && <Button onClick={onClickUpdate}>수정</Button>}
                       <Button type="danger" onClick={onRemovePost} loading={removePostLoading}>삭제</Button>
                     </>
                   ) : <Button>신고</Button>}
@@ -102,12 +127,18 @@ const PostCard = ({ post }) => {
               <div style={{ float: 'right' }}>{moment(post.createdAt).format('YYYY.MM.DD')}</div>
               <Card.Meta
                 avatar={(
-                  <Link href={`/user/${post.Retweet.User.id}`}>
+                  <Link href={`/user/${post.Retweet.User.id}`} prefetch={false}>
                     <Avatar>{post.Retweet.User.nickname[0]}</Avatar>
                   </Link>
                 )}
                 title={post.Retweet.User.nickname}
-                description={<PostCardContent postData={post.Retweet.content} />}
+                description={(
+                  <PostCardContent
+                    onChangePost={onChangePost}
+                    onCancelUpdate={onCancelUpdate}
+                    postData={post.Retweet.content}
+                  />
+                )}
               />
             </Card>
           )
@@ -116,12 +147,19 @@ const PostCard = ({ post }) => {
               <div style={{ float: 'right' }}>{moment(post.createdAt).format('YYYY.MM.DD')}</div>
               <Card.Meta
                 avatar={(
-                  <Link href={`/user/${post.User.id}`}>
+                  <Link href={`/user/${post.User.id}`} prefetch={false}>
                     <Avatar>{post.User.nickname[0]}</Avatar>
                   </Link>
                 )}
                 title={post.User.nickname}
-                description={<PostCardContent postData={post.content} />}
+                description={(
+                  <PostCardContent
+                    editMode={editMode}
+                    onChangePost={onChangePost}
+                    onCancelUpdate={onCancelUpdate}
+                    postData={post.content}
+                  />
+                )}
               />
             </>
           )}
@@ -138,7 +176,7 @@ const PostCard = ({ post }) => {
                 <Comment
                   author={item.User.nickname}
                   avatar={(
-                    <Link href={`/user/${item.User.id}`}>
+                    <Link href={`/user/${item.User.id}`} prefetch={false}>
                       <Avatar>{item.User.nickname[0]}</Avatar>
                     </Link>
                   )}

@@ -9,6 +9,7 @@ module.exports = withBundleAnalyzer({
     return {
       ...config,
       mode: prod ? 'production' : 'development',
+      // hidden-source-map 으로 바꾸지 않으면 개발자모드-소스에 webpack 이 생김
       devtool: prod ? 'hidden-source-map' : 'eval',
       plugins: [
         ...config.plugins,

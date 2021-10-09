@@ -37,6 +37,7 @@ import {
   LOAD_USER_POSTS_FAILURE,
   LOAD_HASHTAG_POSTS_SUCCESS,
   LOAD_HASHTAG_POSTS_FAILURE,
+  UPDATE_POST_REQUEST, UPDATE_POST_SUCCESS, UPDATE_POST_FAILURE,
 } from '../stringLabel/action';
 
 function loadPostAPI(data) {
@@ -145,6 +146,26 @@ function* addPost(action) {
   } catch (err) {
     yield put({
       type: ADD_POST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function updatePostAPI(data) {
+  return axios.patch(`/post/${data.PostId}`, data);
+}
+
+function* updatePost(action) {
+  try {
+    const result = yield call(updatePostAPI, action.data);
+
+    yield put({
+      type: UPDATE_POST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: UPDATE_POST_FAILURE,
       error: err.response.data,
     });
   }
@@ -309,6 +330,10 @@ function* watchAddPost() {
   // yield throttle('ADD_POST_REQUEST', addPost, 10000);
 }
 
+function* watchUpdatePost() {
+  yield takeEvery(UPDATE_POST_REQUEST, updatePost);
+}
+
 function* watchRemovePost() {
   yield takeEvery(REMOVE_POST_REQUEST, removePost);
 }
@@ -340,6 +365,7 @@ export default function* postSaga() {
     fork(watchLoadUserPosts),
     fork(watchLoadHashtagPosts),
     fork(watchAddPost),
+    fork(watchUpdatePost),
     fork(watchRemovePost),
     fork(watchUploadImages),
     fork(watchLikePost),

@@ -34,12 +34,22 @@ if (process.env.NODE_ENV === 'production') {
   app.use(morgan('comnbined')); // 로그가 자세히 남음
   app.use(hpp()); // 보안용
   app.use(helmet());
+  // CORS 회피
+  app.use(cors({
+    origin: ['http://localhost:3060', 'http://172.31.5.240:80'], // 해당 주소의 요청만 허용하겠다.
+    credentials: true,  // true 로 설정해야 쿠키도 같이 전달함
+  }));
 } else {
   app.use(morgan('dev'));
+  // CORS 회피
+  app.use(cors({
+    origin: ['http://localhost:3060'], // 해당 주소의 요청만 허용하겠다.
+    credentials: true,  // true 로 설정해야 쿠키도 같이 전달함
+  }));
 }
 // CORS 회피
 app.use(cors({
-  origin: ['http://localhost:3060', 'http://3.34.127.83:80'], // 해당 주소의 요청만 허용하겠다.
+  origin: ['http://localhost:3060', 'http://172.31.5.240:80'], // 해당 주소의 요청만 허용하겠다.
   credentials: true,  // true 로 설정해야 쿠키도 같이 전달함
 }));
 
@@ -54,8 +64,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(session({
   saveUninitialized: false,
-  resave: false,
+  resave: false,  // 세션의 변경사항이 없을 때도 저장 - true 는 deprecated 임
   secret: process.env.COOKIE_SECRET, // 쿠키의 랜덤한 문자열을 만들어낼 키 값
+  cookie: { // front, back 간 쿠키 공유를 위해 사용 (서로 다른 서버에 배포하였을 때)
+    httpOnly: true,
+    secure: false,  // https 사용할 때 true
+    // domain: process.env.NODE_ENV === 'production' && '.junyoung.xyz'  // 지정한 도메인에서 쿠키 공유
+  }
 }));
 app.use(passport.initialize());
 app.use(passport.session());

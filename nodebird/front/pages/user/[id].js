@@ -3,11 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { END } from 'redux-saga';
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
+import { Avatar, Card } from 'antd';
 
 import AppLayout from '../../components/AppLayout';
-import PostForm from '../../components/PostForm';
 import PostCard from '../../components/PostCard';
-
 import wrapper from '../../store/configureStore';
 import {
   LOAD_MY_INFO_REQUEST,
@@ -19,7 +19,7 @@ const User = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { id } = router.query;
-  const { userInfo } = useSelector((state) => state.user);
+  const { userInfo, me } = useSelector((state) => state.user);
   const { mainPosts, hasMorePosts, loadPostsLoading, retweetError } = useSelector(
     (state) => state.post,
   );
@@ -53,7 +53,48 @@ const User = () => {
 
   return (
     <AppLayout>
-      {userInfo && <PostForm />}
+      {userInfo && (
+        <Head>
+          <title>
+            {userInfo.nickname}
+            님의 글
+          </title>
+          <meta name="description" content={`${userInfo.nickname}님의 게시글`} />
+          <meta property="og:title" content={`${userInfo.nickname}님의 게시글`} />
+          <meta property="og:description" content={`${userInfo.nickname}님의 게시글`} />
+          <meta property="og:image" content="https://nodebird.com/favicon.ico" />
+          <meta property="og:url" content={`https://nodebird.com/user/${id}`} />
+        </Head>
+      )}
+      {userInfo && userInfo.id !== me?.id
+        ? (
+          <Card
+            style={{ marginBottom: 20 }}
+            actions={[
+              <div key="twit">
+                짹짹
+                <br />
+                {userInfo.Posts}
+              </div>,
+              <div key="following">
+                팔로잉
+                <br />
+                {userInfo.Followings}
+              </div>,
+              <div key="follower">
+                팔로워
+                <br />
+                {userInfo.Followers}
+              </div>,
+            ]}
+          >
+            <Card.Meta
+              avatar={<Avatar>{userInfo.nickname[0]}</Avatar>}
+              title={userInfo.nickname}
+            />
+          </Card>
+        )
+        : null}
       {mainPosts.map((post) => (
         <PostCard key={post.id} post={post} />
       ))}
@@ -105,7 +146,7 @@ const User = () => {
 
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async ({ req, res, params }) => {
-    console.log('getServerSideProps start');
+    // console.log('getServerSideProps start');
     // console.log(req.headers);
 
     const cookie = req ? req.headers.cookie : '';
@@ -127,7 +168,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
     });
 
     store.dispatch(END);
-    console.log('getServerSideProps end');
+    // console.log('getServerSideProps end');
     await store.sagaTask.toPromise();
   },
 );

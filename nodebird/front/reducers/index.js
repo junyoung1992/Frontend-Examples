@@ -7,7 +7,7 @@ import post from './post';
 // combineReducers를 사용해 복수의 분할된 리듀서를 병합
 const rootReducer = (state, action) => {
   switch (action.type) {
-    case HYDRATE: // 추후 Redux SSR을 위해 HYDRATE 추가
+    case HYDRATE: // 추후 Redux SSR 을 위해 HYDRATE 추가
       // console.log('HYDRATE', action);
       return action.payload;
     default: {

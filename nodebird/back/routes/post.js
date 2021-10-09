@@ -13,6 +13,8 @@ try {
 } catch (error) {
   console.log('uploads 폴더가 없으므로 생성합니다.');
   fs.mkdirSync('uploads');
+  fs.mkdirSync('uploads/original');
+  fs.mkdirSync('uploads/thumb');
 }
 
 // multer 는 app 보다는 라우터마다 개별적으로 적용
@@ -25,7 +27,7 @@ const upload = multer({
       // node 는 파일 이름이 같은 경우 덮어씌우므로, 이를 피해서 저장해야 함
       const ext = path.extname(file.originalname); // 확장자 추출 (.png)
       const basename = path.basename(file.originalname, ext);  // 파일명 추출 (image)
-      done(null, basename + '_' + new Date().getTime() + ext);
+      done(null, `original/${Date.now()}_${basename}${ext}`);
     },
   }),
   limits: {
@@ -266,6 +268,39 @@ router.patch('/:postId/like', isLoggedIn, async (req, res, next) => {
   } catch (error) {
    console.error(error);
    next(error);
+  }
+});
+
+// PATCH /post/1
+router.patch('/:postId', isLoggedIn, async (req, res, next) => {
+  try {
+    await Post.update({
+      content: req.body.content,
+    },{
+      where: {
+        id: req.params.postId,
+        UserId: req.user.id,
+      },
+    });
+
+    const hashtags = req.body.content.match(/#[^\s#]+/g);
+    if (hashtags) {
+      const result = await Promise.all(hashtags.map(
+        (tag) => Hashtag.findOrCreate({
+          where: {name: tag.slice(1).toLowerCase() },
+        })
+      ));
+      
+      const post = await Post.findOne({
+        where: { id: req.params.postId },
+      })
+      await post.setHashtags(result.map((v) => v[0])); // add 는 추가하는데 set 은 기존 것들 날려버리고 새로 넣음
+    }
+
+    res.status(200).json({ PostId: parseInt(req.params.postId, 10), content: req.body.content });
+  } catch (error) {
+    console.error(error);
+    next(error);
   }
 });
 
