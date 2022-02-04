@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>두더지 잡기</title>
+  <style>
+    .cell {
+      display: inline-block;
+      position: relative;
+      width: 200px;
+      height: 200px;
+      background: 'yellow';
+      overflow: hidden;
+      user-select: none;
+    }
+    .gopher, .bomb {
+      width: 200px;
+      height: 200px;
+      bottom: 0;
+      position: absolute;
+      transition: bottom 1s;
+    }
+    .gopher {
+      background: url('./gopher.png') center center no-repeat;
+      background-size: 200px 200px;
+      user-select: none;
+    }
+    .dead {
+      background: url('./dead_gopher.png') center center no-repeat;
+      background-size: 200px 200px;
+      user-select: none;
+    }
+    .bomb {
+      background: url('./bomb.png') center center no-repeat;
+      background-size: 200px 200px;
+      user-select: none;
+    }
+    .boom {
+      background: url('./explode.png') center center no-repeat;
+      background-size: 200px 200px;
+      user-select: none;
+    }
+    .hidden {
+      bottom: -200px;
+      user-select: none;
+    }
+    .hole {
+      width: 200px;
+      height: 150px;
+      position: absolute;
+      bottom: 0;
+      background: url('./mole-hole.png') center center no-repeat;
+      background-size: 200px 150px;
+      user-select: none;
+    }
+    .hole-front {
+      width: 200px;
+      height: 30px;
+      position: absolute;
+      bottom: 0;
+      background: url('./mole-hole-front.png') center center no-repeat;
+      background-size: 200px 30px;
+      user-select: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <span id="timer">60</span>초&nbsp;
+    <span id="score">0</span>점&nbsp;
+    <span id="life">3</span>목숨
+    <button id="start">시작</button>
+  </div>
+  <div id="game">
+    <div class="row">
+      <div class="cell">
+        <div class="hole"></div>
+        <div class="gopher hidden"></div>
+        <div class="bomb hidden"></div>
+        <div class="hole-front"></div>
+      </div>
+      <div class="cell">
+        <div class="hole"></div>
+        <div class="gopher hidden"></div>
+        <div class="bomb hidden"></div>
+        <div class="hole-front"></div>
+      </div>
+      <div class="cell">
+        <div class="hole"></div>
+        <div class="gopher hidden"></div>
+        <div class="bomb hidden"></div>
+        <div class="hole-front"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="cell">
+        <div class="hole"></div>
+        <div class="gopher hidden"></div>
+        <div class="bomb hidden"></div>
+        <div class="hole-front"></div>
+      </div>
+      <div class="cell">
+        <div class="hole"></div>
+        <div class="gopher hidden"></div>
+        <div class="bomb hidden"></div>
+        <div class="hole-front"></div>
+      </div>
+      <div class="cell">
+        <div class="hole"></div>
+        <div class="gopher hidden"></div>
+        <div class="bomb hidden"></div>
+        <div class="hole-front"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="cell">
+        <div class="hole"></div>
+        <div class="gopher hidden"></div>
+        <div class="bomb hidden"></div>
+        <div class="hole-front"></div>
+      </div>
+      <div class="cell">
+        <div class="hole"></div>
+        <div class="gopher hidden"></div>
+        <div class="bomb hidden"></div>
+        <div class="hole-front"></div>
+      </div>
+      <div class="cell">
+        <div class="hole"></div>
+        <div class="gopher hidden"></div>
+        <div class="bomb hidden"></div>
+        <div class="hole-front"></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const $timer = document.querySelector('#timer');
+    const $score = document.querySelector('#score');
+    const $life = document.querySelector('#life');
+    const $game = document.querySelector('#game');
+    const $start = document.querySelector('#start');
+    const $$cells = document.querySelectorAll('.cell');
+
+    const holes = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    let started = false;
+    let score = 0;
+    let time = 60;
+    let life = 3;
+
+    let timeId;
+    let tickId;
+
+    $start.addEventListener('click', () => {
+      if (started) {  // 이미 시작했으면 무시
+        return;
+      }
+      started = true;
+      console.log('시작');
+
+      timerId = setInterval(() => {
+        // 부동소수점 문제를 피하기 위해 정수로 변환 후 연산
+        time = (time * 10 - 1) / 10;
+        $timer.textContent = time;
+        if (time === 0) {
+          setTimeout(() => {
+            clearInterval(timerId);
+            clearInterval(tickId);
+            alert(`게임 오버! 점수는 ${score}점`);
+          }, 50);
+        }
+      }, 100);
+
+      tickId = setInterval(tick, 1000);
+      tick();
+    });
+
+    // 두더지 30%, 폭탄 20%, 빈 칸 50%
+    let gopherPercent = 0.3;
+    let bombPercent = 0.5;
+    function tick() {
+      holes.forEach((hole, index) => {
+        if(hole) {  // 무언가 일어나고 있으면 return (0이 아니면)
+          return;
+        }
+        const randomValue = Math.random();
+        if (randomValue < gopherPercent) {
+          const $gopher = $$cells[index].querySelector('.gopher');
+          holes[index] = setTimeout(() => { // 1초 뒤에 사라짐
+            $gopher.classList.add('hidden');
+            holes[index] = 0;
+          }, 1000);
+          $gopher.classList.remove('hidden');
+        } else if (randomValue < bombPercent) {
+          const $bomb = $$cells[index].querySelector('.bomb');
+          holes[index] = setTimeout(() => { // 1초 뒤에 사라짐
+            $bomb.classList.add('hidden');
+            holes[index] = 0;
+          }, 1000);
+          $bomb.classList.remove('hidden');
+        }
+      });
+    }
+
+    $$cells.forEach(($cell, index) => {
+      $cell.querySelector('.gopher').addEventListener('click', (event) => {
+        // 이미 dead 상태가 된 경우에는 점수를 주지 않음
+        if (!event.target.classList.contains('dead')) {
+          score += 1;
+          $score.textContent = score;
+        }
+
+        event.target.classList.add('dead');
+        event.target.classList.add('hidden');
+        clearTimeout(holes[index]); // 기존 내려가는 타이머 제거
+        setTimeout(() => {
+          holes[index] = 0;
+          event.target.classList.remove('dead');
+        }, 1000);
+      });
+      $cell.querySelector('.bomb').addEventListener('click', (event) => {
+        // 이미 dead 상태가 된 경우에는 점수를 주지 않음
+        if (!event.target.classList.contains('boom')) {
+          life -= 1;
+          $life.textContent = life;
+          if (life === 0) {
+            setTimeout(() => {
+              clearInterval(timerId);
+              clearInterval(tickId);
+              alert(`게임 오버! 점수는 ${score}점`);
+            }, 50);
+          }
+        }
+
+        event.target.classList.add('boom');
+        event.target.classList.add('hidden');
+        clearTimeout(holes[index]); // 기존 내려가는 타이머 제거
+        setTimeout(() => {
+          holes[index] = 0;
+          event.target.classList.remove('boom');
+        }, 1000);
+      })
+    });
+  </script>
+</body>
+
+</html>
