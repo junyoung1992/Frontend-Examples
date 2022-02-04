@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>틱택토</title>
+  <style>
+    table {
+      border-collapse: collapse;
+    }
+
+    td {
+      border: 1px solid black;
+      width: 40px;
+      height: 40px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    // 객체 구조분해 할당 - 배열도 가능
+    const { body } = document;
+    // const body = document.body;
+    const $table = document.createElement('table');
+    const $result = document.createElement('div');
+    const rows = [];
+    let turn = 'O';
+
+    const callback = (event) => {
+      // 이벤트 버블링
+      // event.target => td : 이벤트 발생 태그
+      // event.currentTarget => table : 이벤트를 붙인 태그
+      // event.stopPropagation() => 이벤트 버블링 방지
+      console.log('clicked');
+      // 칸에 글자가 있으면?
+      if (event.target.textContent) return;
+      // 칸에 글자가 없으면?
+      event.target.textContent = turn;
+      // 승부 확인
+      if (checkWinner(event.target)) {
+        $result.textContent = `${turn} 님이 승리!`;
+        $table.removeEventListener('click', callback);
+        return;
+      }
+      // 무승부
+      /*let draw = true;
+      rows.forEach((row) => {
+        row.forEach((cell) => {
+          if (!cell.textContent) {
+            draw = false;
+          }
+        });
+      });
+      if (draw) { */
+      if (checkDraw()) {
+        $result.textContent = `무승부`;
+        $table.removeEventListener('click', callback);
+        return;
+      }
+      // 턴 전환
+      turn = turn === 'X' ? 'O' : 'X';
+    };
+
+    const checkDraw = () => {
+      return rows.flat().every(td => td.textContent);
+    };
+
+    const checkWinner = (target) => {
+      let rowIndex = target.parentNode.rowIndex;  // tr이 index 정보를 가지고 있음
+      let colIndex = target.cellIndex;            // td는 index 정보를 가지고 있음
+      /*let rowIndex;
+      let colIndex;
+      rows.forEach((row, ri) => {
+        row.forEach((cell, ci) => {
+          if (cell === target) {
+            rowIndex = ri;
+            colIndex = ci;
+          }
+        });
+      });*/
+
+      // 세 칸이 다 채워졌나?
+      let hasWinner = false;
+      // 1. 가로줄 검사
+      if (
+        rows[rowIndex][0].textContent === turn &&
+        rows[rowIndex][1].textContent === turn &&
+        rows[rowIndex][2].textContent === turn
+      ) {
+        hasWinner = true;
+      }
+      // 2. 세로줄 검사
+      if (
+        rows[0][colIndex].textContent === turn &&
+        rows[1][colIndex].textContent === turn &&
+        rows[2][colIndex].textContent === turn
+      ) {
+        hasWinner = true;
+      }
+      // 3. 대각선 검사
+      if ((
+        rows[0][0].textContent === turn &&
+        rows[1][1].textContent === turn &&
+        rows[2][2].textContent === turn
+      ) || (
+        rows[2][0].textContent === turn &&
+        rows[1][1].textContent === turn &&
+        rows[0][2].textContent === turn
+      )) {
+        hasWinner = true;
+      }
+
+      return hasWinner;
+    };
+
+    for (let i = 0; i < 3; i++) {
+      const $tr = document.createElement('tr');
+      const cells = [];
+      for (let j = 0; j < 3; j++) {
+        const $td = document.createElement('td');
+        cells.push($td);
+        // $td.addEventListener('click', callback)
+        $tr.append($td);
+      }
+      rows.push(cells);
+      $table.append($tr);
+    }
+    // 이벤트 버블링
+    $table.addEventListener('click', callback);
+    body.append($table);
+    body.append($result);
+  </script>
+</body>
+
+</html>

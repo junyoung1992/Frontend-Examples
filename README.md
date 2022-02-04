@@ -13,3 +13,8 @@
 
 - React로 NodeBird SNS 만들기<br />
     *<https://www.inflearn.com/course/노드버드-리액트-리뉴얼>*
+
+## 3. Frontend - JS, React
+
+- Javascript <br />
+    *<https://www.youtube.com/playlist?list=PLcqDmjxt30RvEEN6eUCcSrrH-hKjCT4wt>*
